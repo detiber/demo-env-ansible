@@ -1,0 +1,9 @@
+---
+hosts: localhost
+gather_facts: no
+become: no
+tasks:
+- debug:
+    msg: Teardown should happen here
+
+  # TODO: actually implement teardown

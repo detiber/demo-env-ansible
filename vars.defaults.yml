@@ -1,0 +1,17 @@
+---
+# Generic Defaults
+env_id: default
+cluster_id: default
+
+
+# EC2 Defaults
+ec2_region: us-east-1
+#ec2_vpc_id: vpc-8e2bfce9
+
+
+demo_vpc_cidr: 172.18.0.0/16
+demo_vpc_subnet_cidrs:
+- 172.18.1.0/24
+- 172.18.2.0/24
+- 172.18.3.0/24
+- 172.18.4.0/24

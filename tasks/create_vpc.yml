@@ -1,0 +1,28 @@
+---
+- set_fact:
+    ec2_zones: "{{ lookup('ec2_zones_by_region', ec2_region) }}"
+
+- set_fact:
+    ec2_zones_count: "{{ ec2_zones | oo_split(',') | count }}"
+
+- name: Create the VPC and Subnets
+  cloudformation:
+    region: "{{ ec2_region }}"
+    stack_name: keynote-demo-{{ env_id }}-{{ cluster_id }}
+    state: present
+    tags:
+      KeynoteDemo: True
+      environment: "{{ env_id }}"
+      clusterid: "{{ cluster_id }}"
+    template: files/vpc_cf.json
+    template_parameters:
+      VpcCidrBlock: "{{ demo_vpc_cidr }}"
+      VpcName: keynote_demo_{{ env_id }}_{{ cluster_id }}
+      NumSubnets: "{{ ec2_zones_count }}"
+      SubnetAvailabilityZones: "{{ ec2_zones }}"
+      SubnetCidrBlocks: "{{ demo_vpc_subnet_cidrs | join(',') }}"
+  register: vpc_cf_output
+
+- name: Store CloudFormation generated outputs as facts
+  set_fact:
+    ec2_vpc_id: "{{ vpc_cf_output.stack_outputs.VpcID }}"
