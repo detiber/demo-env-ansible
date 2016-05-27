@@ -1,0 +1,37 @@
+---
+# important variables:
+# ec2_region (default us-east-1)
+# cluster_id
+# env_id
+
+
+# VPC related variables
+#   demo_vpc_cidr
+#   demo_vpc_subnet_cidrs
+# or
+#   ec2_vpc_id
+
+- hosts: localhost
+  gather_facts: no
+  become: no
+  vars_files:
+  - vars.defaults.yml
+  tasks:
+  - include: tasks/create_vpc.yml
+    when: ec2_vpc_id is not defined
+
+  - debug: var=ec2_vpc_id
+
+#- include: openshift-ansible-contrib/playbooks/provisioning/aws/cloudformation_full/cloudformation_setup.yml
+
+#- include: openshift-ansible-contrib/playbooks/provisioning/aws/cloudformation/group_setup.yml
+
+#- hosts: localhost
+#  gather_facts: no
+#  become: no
+#  tasks:
+#  - debug: var=groups
+
+#- include: openshift-ansible-contrib/playbooks/provisioning/aws/cloudformation/ops_mirror.yml
+
+#- include: openshift-ansible/playbooks/byo/openshift-cluster/config.yml

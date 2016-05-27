@@ -1,0 +1,6 @@
+[submodule "openshift-ansible-contrib"]
+	path = openshift-ansible-contrib
+	url = https://github.com/openshift/openshift-ansible-contrib.git
+[submodule "openshift-ansible"]
+	path = openshift-ansible
+	url = https://github.com/openshift/openshift-ansible.git
