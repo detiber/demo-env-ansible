@@ -1,0 +1,22 @@
+- name: wait for ssh
+  wait_for: "port=22 host={{ item }}"
+  with_items: "{{ env_cluster_hosts }}"
+
+- name: Add masters to requisite groups
+  add_host:
+    name: "{{ item }}"
+    groups: masters, etcd, nodes, cluster_hosts, OSEv3
+    openshift_node_labels:
+      region: "{{ hostvars[item].ec2_region }}"
+      zone: "{{ hostvars[item].ec2_placement }}"
+  with_items: "{{ master_hosts }}"
+
+- name: Add nodes to requisite groups
+  add_host:
+    name: "{{ item }}"
+    groups: nodes, cluster_hosts, OSEv3
+    openshift_node_labels:
+      region: "{{ hostvars[item].ec2_region }}"
+      zone: "{{ hostvars[item].ec2_placement }}"
+  with_items: "{{ node_hosts }}"
+
