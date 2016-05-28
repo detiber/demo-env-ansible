@@ -1,0 +1,7 @@
+---
+- name: Teardown the Security Groups
+  cloudformation:
+    region: "{{ ec2_region }}"
+    stack_name: keynote-security-groups-{{ env_id }}-{{ cluster_id }}
+    state: absent
+    template: files/sg_cf.json

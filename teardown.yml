@@ -1,9 +1,15 @@
 ---
-hosts: localhost
-gather_facts: no
-become: no
-tasks:
-- debug:
-    msg: Teardown should happen here
+- hosts: localhost
+  gather_facts: no
+  become: no
+  vars_files:
+  - vars.defaults.yml
+  tasks:
+  - include: tasks/teardown_hosts.yml
+    when: demo_create_hosts | default(False) | bool
 
-  # TODO: actually implement teardown
+  - include: tasks/teardown_sgs.yml
+    when: demo_create_sgs | default(False) | bool
+
+  - include: tasks/teardown_vpc.yml
+    when: demo_create_vpc | default(False) | bool

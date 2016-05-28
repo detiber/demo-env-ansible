@@ -1,28 +1,21 @@
 ---
-# important variables:
-# ec2_region (default us-east-1)
-# cluster_id
-# env_id
-
-
-# VPC related variables
-#   demo_vpc_cidr
-#   demo_vpc_subnet_cidrs
-# or
-#   ec2_vpc_id
-
 - hosts: localhost
   gather_facts: no
   become: no
   vars_files:
   - vars.defaults.yml
+  vars:
+    demo_route_53_subdomain: "{{ cluster_id }}.{{ env_id }}.{{ demo_route_53_zone }}"
   tasks:
   - include: tasks/create_vpc.yml
-    when: ec2_vpc_id is not defined
+    when: demo_create_vpc | default(False) | bool
 
-  - debug: var=ec2_vpc_id
+  - include: tasks/create_sgs.yml
+    when: demo_create_sgs | default(False) | bool
 
-#- include: openshift-ansible-contrib/playbooks/provisioning/aws/cloudformation_full/cloudformation_setup.yml
+  - include: tasks/create_hosts.yml
+    when: demo_create_hosts | default(False) | bool
+
 
 #- include: openshift-ansible-contrib/playbooks/provisioning/aws/cloudformation/group_setup.yml
 

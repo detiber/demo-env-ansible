@@ -1,0 +1,26 @@
+---
+- name: Create the Security Groups
+  cloudformation:
+    region: "{{ ec2_region }}"
+    stack_name: keynote-security-groups-{{ env_id }}-{{ cluster_id }}
+    state: present
+    tags:
+      KeynoteDemo: True
+      environment: "{{ env_id }}"
+      clusterid: "{{ cluster_id }}"
+    template: files/sg_cf.json
+    template_parameters:
+      VpcId: "{{ demo_vpc_id }}"
+      MasterApiPort: "{{ demo_api_port }}"
+  register: sg_cf_output
+
+- debug: var=sg_cf_output
+
+- name: Store CloudFormation generated outputs as facts
+  set_fact:
+    demo_master_sg_ids: "{{ sg_cf_output.stack_outputs.MasterSecurityGroups }}"
+    demo_node_sg_ids: "{{ sg_cf_output.stack_outputs.NodeSecurityGroups }}"
+    demo_infra_sg_ids: "{{ sg_cf_output.stack_outputs.InfraSecurityGroups }}"
+    demo_infra_elb_sg_ids: "{{ sg_cf_output.stack_outputs.InfraElbSecurityGroups }}"
+    demo_master_int_elb_sg_ids: "{{ sg_cf_output.stack_outputs.MasterIntElbSecurityGroups }}"
+    demo_master_ext_elb_sg_ids: "{{ sg_cf_output.stack_outputs.MasterExtElbSecurityGroups }}"

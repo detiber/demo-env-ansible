@@ -8,7 +8,7 @@
 - name: Create the VPC and Subnets
   cloudformation:
     region: "{{ ec2_region }}"
-    stack_name: keynote-demo-{{ env_id }}-{{ cluster_id }}
+    stack_name: keynote-vpc-{{ env_id }}-{{ cluster_id }}
     state: present
     tags:
       KeynoteDemo: True
@@ -23,6 +23,9 @@
       SubnetCidrBlocks: "{{ demo_vpc_subnet_cidrs | join(',') }}"
   register: vpc_cf_output
 
+- debug: var=vpc_cf_output
+
 - name: Store CloudFormation generated outputs as facts
   set_fact:
-    ec2_vpc_id: "{{ vpc_cf_output.stack_outputs.VpcID }}"
+    demo_vpc_id: "{{ vpc_cf_output.stack_outputs.VpcID }}"
+    demo_vpc_subnet_ids: "{{ vpc_cf_output.stack_outputs.VpcSubnets }}"

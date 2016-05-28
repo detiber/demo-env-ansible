@@ -144,6 +144,30 @@
     "VpcID": {
       "Description" : "VPC ID",
       "Value" : { "Ref": "Vpc" }
+    },
+    "VpcSubnets": {
+      "Description": "VPC Subnets",
+      "Value" : { "Fn::Join": [ ",", [
+        {"Ref": "Subnet1"},
+        {"Fn::If": [
+            "CreateSubnet2",
+            {"Ref": "Subnet2"},
+            {"Ref": "AWS::NoValue"}
+          ]
+        },
+        {"Fn::If": [
+            "CreateSubnet3",
+            {"Ref": "Subnet3"},
+            {"Ref": "AWS::NoValue"}
+          ]
+        },
+        {"Fn::If": [
+            "CreateSubnet4",
+            {"Ref": "Subnet4"},
+            {"Ref": "AWS::NoValue"}
+          ]
+        }
+      ] ] }
     }
   }
 }

@@ -1,0 +1,37 @@
+---
+- name: Create the Hosts
+  cloudformation:
+    region: "{{ ec2_region }}"
+    stack_name: keynote-hosts-{{ env_id }}-{{ cluster_id }}
+    state: present
+    tags:
+      KeynoteDemo: True
+      environment: "{{ env_id }}"
+      clusterid: "{{ cluster_id }}"
+    template: files/hosts_cf.json
+    template_parameters:
+      MasterApiPort: "{{ demo_api_port }}"
+      MasterSGs: "{{ demo_master_sg_ids }}"
+      NodeSGs: "{{ demo_node_sg_ids }}"
+      InfraSGs: "{{ demo_infra_sg_ids }}"
+      InfraElbSGs: "{{ demo_infra_elb_sg_ids }}"
+      MasterIntElbSGs: "{{ demo_master_int_elb_sg_ids }}"
+      MasterExtElbSGs: "{{ demo_master_ext_elb_sg_ids }}"
+      Subnets: "{{ demo_vpc_subnet_ids }}"
+      MasterImageId: "{{ demo_master_ami }}"
+      NodeImageId: "{{ demo_node_ami }}"
+      InfraImageId: "{{ demo_infra_ami }}"
+      Route53HostedZone: "{{ demo_route_53_zone }}."
+      AppWildcardDomain: "*.apps.{{ demo_route_53_subdomain }}"
+      KeyName: "{{ demo_keypair }}"
+      MasterClusterPublicHostname: "openshift.{{ demo_route_53_subdomain }}"
+      MasterClusterHostname: "openshift.internal.{{ demo_route_53_subdomain }}"
+      MasterInstanceType: "{{ demo_master_instance_type }}"
+      NodeInstanceType: "{{ demo_node_instance_type }}"
+      InfraInstanceType: "{{ demo_infra_instance_type }}"
+      NumMasters: "{{ demo_num_masters }}"
+      NumNodes: "{{ demo_num_nodes }}"
+      NumInfra: "{{ demo_num_infra }}"
+  register: hosts_cf_output
+
+- debug: var=hosts_cf_output

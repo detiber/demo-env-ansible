@@ -1,0 +1,7 @@
+---
+- name: Teardown the VPC and Subnets
+  cloudformation:
+    region: "{{ ec2_region }}"
+    stack_name: keynote-vpc-{{ env_id }}-{{ cluster_id }}
+    state: absent
+    template: files/vpc_cf.json

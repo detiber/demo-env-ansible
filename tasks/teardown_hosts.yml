@@ -1,0 +1,7 @@
+---
+- name: Teardown the Hosts
+  cloudformation:
+    region: "{{ ec2_region }}"
+    stack_name: keynote-hosts-{{ env_id }}-{{ cluster_id }}
+    state: absent
+    template: files/hosts_cf.json
