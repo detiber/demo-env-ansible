@@ -1,6 +1,8 @@
 ---
+- debug: var=ec2_region
 - set_fact:
     ec2_zones: "{{ lookup('ec2_zones_by_region', ec2_region) }}"
+  when: ec2_zones is not defined
 
 - set_fact:
     ec2_zones_count: "{{ ec2_zones | oo_split(',') | count }}"
