@@ -2,6 +2,7 @@
 - hosts: localhost
   gather_facts: no
   become: no
+  connection: local
   vars_files:
   - vars.defaults.yml
   vars:
@@ -16,8 +17,10 @@
                                 | intersect(groups['tag_host-type_node'])) }}"
   tasks:
   - include: tasks/group_setup.yml
-  - debug: var=groups
 
-- include: openshift-ansible-contrib/playbooks/provisioning/aws/cloudformation/ops_mirror.yml
+
+- hosts: OSEv3
+  tasks:
+  - include: tasks/repo_config.yml
 
 #- include: openshift-ansible/playbooks/byo/openshift-cluster/config.yml

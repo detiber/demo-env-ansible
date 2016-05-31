@@ -46,17 +46,74 @@
     "MasterImageId": {
       "Type": "AWS::EC2::Image::Id"
     },
+    "MasterUserData": {
+      "Type": "String"
+    },
+    "MasterRootVolSize": {
+      "Type": "String",
+      "Default": "30"
+    },
+    "MasterDockerVolSize": {
+      "Type": "String",
+      "Default": "25"
+    },
+    "MasterRootVolType": {
+      "Type": "String",
+      "Default": "gp2"
+    },
+    "MasterDockerVolType": {
+      "Type": "String",
+      "Default": "gp2"
+    },
     "InfraInstanceType": {
       "Type": "String"
     },
     "InfraImageId": {
       "Type": "AWS::EC2::Image::Id"
     },
+    "InfraUserData": {
+      "Type": "String"
+    },
+    "InfraRootVolSize": {
+      "Type": "String",
+      "Default": "30"
+    },
+    "InfraDockerVolSize": {
+      "Type": "String",
+      "Default": "25"
+    },
+    "InfraRootVolType": {
+      "Type": "String",
+      "Default": "gp2"
+    },
+    "InfraDockerVolType": {
+      "Type": "String",
+      "Default": "gp2"
+    },
     "NodeInstanceType": {
       "Type": "String"
     },
     "NodeImageId": {
       "Type": "AWS::EC2::Image::Id"
+    },
+    "NodeUserData": {
+      "Type": "String"
+    },
+    "NodeRootVolSize": {
+      "Type": "String",
+      "Default": "30"
+    },
+    "NodeDockerVolSize": {
+      "Type": "String",
+      "Default": "25"
+    },
+    "NodeRootVolType": {
+      "Type": "String",
+      "Default": "gp2"
+    },
+    "NodeDockerVolType": {
+      "Type": "String",
+      "Default": "gp2"
     },
     "NumMasters": {
       "Type": "Number",
@@ -189,30 +246,87 @@
       "Type": "AWS::AutoScaling::LaunchConfiguration",
       "Properties": {
         "AssociatePublicIpAddress": "true",
+        "BlockDeviceMappings": [
+          {
+            "DeviceName": "/dev/sda1",
+            "Ebs": {
+              "DeleteOnTermination": "true",
+              "VolumeSize": {"Ref": "InfraRootVolSize"},
+              "VolumeType": {"Ref": "InfraRootVolType"}
+            }
+          },
+          {
+            "DeviceName": "/dev/xvdb",
+            "Ebs": {
+              "DeleteOnTermination": "true",
+              "VolumeSize": {"Ref": "InfraDockerVolSize"},
+              "VolumeType": {"Ref": "InfraDockerVolType"}
+            }
+          }
+        ],
         "ImageId": {"Ref": "InfraImageId"},
         "InstanceType": {"Ref": "InfraInstanceType"},
         "KeyName": {"Ref": "KeyName"},
-        "SecurityGroups": { "Ref": "InfraSGs" }
+        "SecurityGroups": { "Ref": "InfraSGs" },
+        "UserData": {"Ref": "InfraUserData"}
       }
     },
     "NodeLC": {
       "Type": "AWS::AutoScaling::LaunchConfiguration",
       "Properties": {
         "AssociatePublicIpAddress": "true",
+        "BlockDeviceMappings": [
+          {
+            "DeviceName": "/dev/sda1",
+            "Ebs": {
+              "DeleteOnTermination": "true",
+              "VolumeSize": {"Ref": "NodeRootVolSize"},
+              "VolumeType": {"Ref": "NodeRootVolType"}
+            }
+          },
+          {
+            "DeviceName": "/dev/xvdb",
+            "Ebs": {
+              "DeleteOnTermination": "true",
+              "VolumeSize": {"Ref": "NodeDockerVolSize"},
+              "VolumeType": {"Ref": "NodeDockerVolType"}
+            }
+          }
+        ],
         "ImageId": {"Ref": "NodeImageId"},
         "InstanceType": {"Ref": "NodeInstanceType"},
         "KeyName": {"Ref": "KeyName"},
-        "SecurityGroups": { "Ref": "NodeSGs" }
+        "SecurityGroups": { "Ref": "NodeSGs" },
+        "UserData": {"Ref": "NodeUserData"}
       }
     },
     "MasterLC": {
       "Type": "AWS::AutoScaling::LaunchConfiguration",
       "Properties": {
         "AssociatePublicIpAddress": "true",
+        "BlockDeviceMappings": [
+          {
+            "DeviceName": "/dev/sda1",
+            "Ebs": {
+              "DeleteOnTermination": "true",
+              "VolumeSize": {"Ref": "MasterRootVolSize"},
+              "VolumeType": {"Ref": "MasterRootVolType"}
+            }
+          },
+          {
+            "DeviceName": "/dev/xvdb",
+            "Ebs": {
+              "DeleteOnTermination": "true",
+              "VolumeSize": {"Ref": "MasterDockerVolSize"},
+              "VolumeType": {"Ref": "MasterDockerVolType"}
+            }
+          }
+        ],
         "ImageId": {"Ref": "MasterImageId"},
         "InstanceType": {"Ref": "MasterInstanceType"},
         "KeyName": {"Ref": "KeyName"},
-        "SecurityGroups": { "Ref": "MasterSGs" }
+        "SecurityGroups": { "Ref": "MasterSGs" },
+        "UserData": {"Ref": "MasterUserData"}
       }
     },
     "InfraASG": {

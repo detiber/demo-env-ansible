@@ -1,0 +1,24 @@
+#cloud-config
+
+mounts:
+- [ xvdb ]
+
+write_files:
+- path: /etc/sysconfig/docker-storage-setup
+  owner: root:root
+  permissions: '0644'
+  content: |
+    DEVS='/dev/xvdb'
+    VG=docker_vg
+- path: /etc/sudoers.d/99-openshift-cloud-init-requiretty
+  owner: root:root
+  permissions: '0440'
+  content: |
+    Defaults:openshift !requiretty
+
+users:
+- default
+
+system_info:
+  default_user:
+    name: openshift

@@ -1,5 +1,4 @@
 ---
-- debug: var=ec2_region
 - set_fact:
     ec2_zones: "{{ lookup('ec2_zones_by_region', ec2_region) }}"
   when: ec2_zones is not defined
@@ -24,8 +23,6 @@
       SubnetAvailabilityZones: "{{ ec2_zones }}"
       SubnetCidrBlocks: "{{ demo_vpc_subnet_cidrs | join(',') }}"
   register: vpc_cf_output
-
-- debug: var=vpc_cf_output
 
 - name: Store CloudFormation generated outputs as facts
   set_fact:

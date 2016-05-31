@@ -14,8 +14,6 @@
       MasterApiPort: "{{ demo_api_port }}"
   register: sg_cf_output
 
-- debug: var=sg_cf_output
-
 - name: Store CloudFormation generated outputs as facts
   set_fact:
     demo_master_sg_ids: "{{ sg_cf_output.stack_outputs.MasterSecurityGroups }}"
