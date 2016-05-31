@@ -6,14 +6,6 @@
   - vars.defaults.yml
   vars:
     demo_route_53_subdomain: "{{ cluster_id }}.{{ env_id }}.{{ demo_route_53_zone }}"
-    env_cluster_hosts: "{{ groups['tag_environment_' ~ env_id]
-                           | intersect(groups['tag_clusterid_' ~ cluster_id]) }}"
-    master_hosts: "{{ groups['tag_environment_' ~ env_id]
-                      | intersect(groups['tag_clusterid_' ~ cluster_id]
-                                  | intersect( groups['tag_host-type_master'])) }}"
-    node_hosts: "{{ groups['tag_environment_' ~ env_id]
-                    | intersect(groups['tag_clusterid_' ~ cluster_id]
-                                | intersect(groups['tag_host-type_node'])) }}"
   tasks:
   - include: tasks/create_vpc.yml
     when: demo_create_vpc | default(False) | bool
@@ -23,10 +15,3 @@
 
   - include: tasks/create_hosts.yml
     when: demo_create_hosts | default(False) | bool
-
-  - include: tasks/group_setup.yml
-
-
-#- include: openshift-ansible-contrib/playbooks/provisioning/aws/cloudformation/ops_mirror.yml
-
-#- include: openshift-ansible/playbooks/byo/openshift-cluster/config.yml
