@@ -23,4 +23,4 @@
   tasks:
   - include: tasks/repo_config.yml
 
-#- include: openshift-ansible/playbooks/byo/openshift-cluster/config.yml
+- include: openshift-ansible/playbooks/byo/openshift-cluster/config.yml
