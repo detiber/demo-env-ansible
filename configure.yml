@@ -18,6 +18,6 @@
   - include: tasks/group_setup.yml
   - debug: var=groups
 
-#- include: openshift-ansible-contrib/playbooks/provisioning/aws/cloudformation/ops_mirror.yml
+- include: openshift-ansible-contrib/playbooks/provisioning/aws/cloudformation/ops_mirror.yml
 
 #- include: openshift-ansible/playbooks/byo/openshift-cluster/config.yml
