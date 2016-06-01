@@ -1,8 +1,4 @@
 ---
-# Generic Defaults
-env_id: default
-cluster_id: default
-
 # EC2 Defaults
 #ec2_region: us-east-1
 ec2_region: us-west-1
@@ -33,11 +29,7 @@ demo_infra_ami: "{{ ec2[ec2_region].default_ami }}"
 demo_master_instance_type: "{{ ec2.default_instance_type }}"
 demo_node_instance_type: "{{ ec2.default_instance_type }}"
 demo_infra_instance_type: "{{ ec2.default_instance_type }}"
-demo_route_53_zone: ose.redhatkeynote.com
 demo_num_masters: 3
 demo_num_infra: 2
 demo_num_nodes: 3
 demo_keypair: keynote-demo
-
-# OpenShift Deployment Settings
-demo_api_port: 443

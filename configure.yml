@@ -3,10 +3,7 @@
   gather_facts: no
   become: no
   connection: local
-  vars_files:
-  - vars.defaults.yml
   vars:
-    demo_route_53_subdomain: "{{ cluster_id }}.{{ env_id }}.{{ demo_route_53_zone }}"
     env_cluster_hosts: "{{ groups['tag_environment_' ~ env_id]
                            | intersect(groups['tag_clusterid_' ~ cluster_id]) }}"
     master_hosts: "{{ groups['tag_environment_' ~ env_id]
@@ -18,8 +15,7 @@
   tasks:
   - include: tasks/group_setup.yml
 
-
-- hosts: OSEv3
+- hosts: cluster_hosts
   tasks:
   - include: tasks/repo_config.yml
 

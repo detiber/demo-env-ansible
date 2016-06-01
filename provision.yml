@@ -4,9 +4,7 @@
   become: no
   connection: local
   vars_files:
-  - vars.defaults.yml
-  vars:
-    demo_route_53_subdomain: "{{ cluster_id }}.{{ env_id }}.{{ demo_route_53_zone }}"
+  - vars.provisioning.yml
   tasks:
   - include: tasks/create_vpc.yml
     when: demo_create_vpc | default(False) | bool

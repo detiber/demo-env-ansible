@@ -4,7 +4,7 @@
   become: no
   connection: local
   vars_files:
-  - vars.defaults.yml
+  - vars.provisioning.yml
   tasks:
   - include: tasks/teardown_hosts.yml
     when: demo_create_hosts | default(False) | bool
