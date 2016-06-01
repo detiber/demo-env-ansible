@@ -67,7 +67,6 @@
     },
     "Subnet1": {
       "Type": "AWS::EC2::Subnet",
-      "DependsOn": ["Vpc"],
       "Properties": {
         "AvailabilityZone": {"Fn::Select": ["0", {"Ref": "SubnetAvailabilityZones"}]},
         "CidrBlock": {"Fn::Select": ["0", {"Ref": "SubnetCidrBlocks"}]},
