@@ -21,6 +21,9 @@ demo_vpc_subnet_cidrs:
 # Security Group Settings
 demo_create_sgs: yes
 
+# IAM Profile Settings
+demo_create_iam_profiles: yes
+
 # Host Settings
 demo_create_hosts: yes
 demo_master_ami: "{{ ec2[ec2_region].default_ami }}"

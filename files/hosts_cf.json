@@ -126,7 +126,19 @@
     "NumNodes": {
       "Type": "Number",
       "MinValue": "1"
+    },
+    "MasterInstanceProfile": {
+      "Type": "String",
+      "Default": ""
+    },
+    "NodeInstanceProfile": {
+      "Type": "String",
+      "Default": ""
     }
+  },
+  "Conditions": {
+    "SetMasterInstanceProfile": {"Fn::Not": [{"Fn::Equals" : [{"Ref" : "MasterInstanceProfile"}, ""]}]},
+    "SetNodeInstanceProfile": {"Fn::Not": [{"Fn::Equals" : [{"Ref" : "MasterInstanceProfile"}, ""]}]}
   },
   "Resources": {
     "MasterIntElb": {
@@ -268,7 +280,14 @@
         "InstanceType": {"Ref": "InfraInstanceType"},
         "KeyName": {"Ref": "KeyName"},
         "SecurityGroups": { "Ref": "InfraSGs" },
-        "UserData": {"Ref": "InfraUserData"}
+        "UserData": {"Ref": "InfraUserData"},
+        "IamInstanceProfile": {
+	  "Fn::If" : [
+	    "SetNodeInstanceProfile",
+	    { "Ref": "NodeInstanceProfile" },
+	    { "Ref": "AWS::NoValue" }
+	  ]
+	}
       }
     },
     "NodeLC": {
@@ -297,7 +316,14 @@
         "InstanceType": {"Ref": "NodeInstanceType"},
         "KeyName": {"Ref": "KeyName"},
         "SecurityGroups": { "Ref": "NodeSGs" },
-        "UserData": {"Ref": "NodeUserData"}
+        "UserData": {"Ref": "NodeUserData"},
+        "IamInstanceProfile": {
+	  "Fn::If" : [
+	    "SetNodeInstanceProfile",
+	    { "Ref": "NodeInstanceProfile" },
+	    { "Ref": "AWS::NoValue" }
+	  ]
+	}
       }
     },
     "MasterLC": {
@@ -326,7 +352,14 @@
         "InstanceType": {"Ref": "MasterInstanceType"},
         "KeyName": {"Ref": "KeyName"},
         "SecurityGroups": { "Ref": "MasterSGs" },
-        "UserData": {"Ref": "MasterUserData"}
+        "UserData": {"Ref": "MasterUserData"},
+        "IamInstanceProfile": {
+	  "Fn::If" : [
+	    "SetMasterInstanceProfile",
+	    { "Ref": "MasterInstanceProfile" },
+	    { "Ref": "AWS::NoValue" }
+	  ]
+	}
       }
     },
     "InfraASG": {

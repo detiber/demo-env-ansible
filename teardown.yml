@@ -8,9 +8,20 @@
   tasks:
   - include: tasks/teardown_hosts.yml
     when: demo_create_hosts | default(False) | bool
+    tags:
+    - hosts
+
+  - include: tasks/teardown_iam_profiles.yml
+    when: demo_create_iam_profiles | default(False) | bool
+    tags:
+    - iam_profiles
 
   - include: tasks/teardown_sgs.yml
     when: demo_create_sgs | default(False) | bool
+    tags:
+    - security_groups
 
   - include: tasks/teardown_vpc.yml
     when: demo_create_vpc | default(False) | bool
+    tags:
+    - vpc

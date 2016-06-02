@@ -44,4 +44,6 @@
       NodeRootVolSize: 30
       NodeDockerVolSize: 25
       NodeDockerVolType: gp2
+      MasterInstanceProfile: "{{ demo_master_iam_profile | default('') }}"
+      NodeInstanceProfile: "{{ demo_node_iam_profile | default('') }}"
   register: hosts_cf_output

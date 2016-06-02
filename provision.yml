@@ -8,9 +8,20 @@
   tasks:
   - include: tasks/create_vpc.yml
     when: demo_create_vpc | default(False) | bool
+    tags:
+    - vpc
 
   - include: tasks/create_sgs.yml
     when: demo_create_sgs | default(False) | bool
+    tags:
+    - security_groups
+
+  - include: tasks/create_iam_profiles.yml
+    when: demo_create_iam_profiles | default(False) | bool
+    tags:
+    - iam_profiles
 
   - include: tasks/create_hosts.yml
     when: demo_create_hosts | default(False) | bool
+    tags:
+    - hosts

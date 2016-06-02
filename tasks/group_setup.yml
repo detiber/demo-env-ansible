@@ -7,6 +7,7 @@
     name: "{{ item }}"
     groups: masters, etcd, nodes, cluster_hosts, OSEv3
     openshift_node_labels:
+      node_type: master
       region: "{{ hostvars[item].ec2_region }}"
       zone: "{{ hostvars[item].ec2_placement }}"
   with_items: "{{ master_hosts }}"
@@ -16,7 +17,17 @@
     name: "{{ item }}"
     groups: nodes, cluster_hosts, OSEv3
     openshift_node_labels:
+      node_type: compute
       region: "{{ hostvars[item].ec2_region }}"
       zone: "{{ hostvars[item].ec2_placement }}"
   with_items: "{{ node_hosts }}"
 
+- name: Add infra nodes to requisite groups
+  add_host:
+    name: "{{ item }}"
+    groups: nodes, cluster_hosts, OSEv3
+    openshift_node_labels:
+      node_type: infra
+      region: "{{ hostvars[item].ec2_region }}"
+      zone: "{{ hostvars[item].ec2_placement }}"
+  with_items: "{{ node_hosts }}"

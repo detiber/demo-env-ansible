@@ -11,7 +11,10 @@
                                   | intersect( groups['tag_host-type_master'])) }}"
     node_hosts: "{{ groups['tag_environment_' ~ env_id]
                     | intersect(groups['tag_clusterid_' ~ cluster_id]
-                                | intersect(groups['tag_host-type_node'])) }}"
+                                | intersect(groups['tag_sub-host_type_compute'])) }}"
+    infra_hosts: "{{ groups['tag_environment_' ~ env_id]
+                     | intersect(groups['tag_clusterid_' ~ cluster_id]
+                                 | intersect(groups['tag_sub-host_type_infra'])) }}"
   tasks:
   - include: tasks/group_setup.yml
 
