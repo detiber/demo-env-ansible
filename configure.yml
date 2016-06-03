@@ -3,6 +3,8 @@
   gather_facts: no
   become: no
   connection: local
+  tags:
+  - always
   vars:
     env_cluster_hosts: "{{ groups['tag_environment_' ~ env_id]
                            | intersect(groups['tag_clusterid_' ~ cluster_id]) }}"
@@ -19,6 +21,8 @@
   - include: tasks/group_setup.yml
 
 - hosts: cluster_hosts
+  tags:
+  - pre
   tasks:
   - include: tasks/repo_config.yml
 
