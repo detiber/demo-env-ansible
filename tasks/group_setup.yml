@@ -30,4 +30,4 @@
       node_type: infra
       region: "{{ hostvars[item].ec2_region }}"
       zone: "{{ hostvars[item].ec2_placement }}"
-  with_items: "{{ node_hosts }}"
+  with_items: "{{ infra_hosts }}"
