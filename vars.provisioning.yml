@@ -1,9 +1,9 @@
 ---
 # EC2 Defaults
-#ec2_region: us-east-1
-ec2_region: us-west-1
+ec2_region: us-east-1
+#ec2_region: us-west-1
 ec2:
-  default_instance_type: t2.medium
+  default_instance_type: m4.large
   us-east-1:
     default_ami: ami-10251c7a
   us-west-1:
