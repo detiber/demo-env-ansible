@@ -10,6 +10,9 @@ write_files:
   content: |
     DEVS='/dev/xvdb'
     VG=docker_vg
+    AUTO_EXTEND_POOL=yes
+    POOL_AUTOEXTEND_THRESHOLD=60
+    POOL_AUTOEXTEND_PERCENT=20
 - path: /etc/sudoers.d/99-openshift-cloud-init-requiretty
   owner: root:root
   permissions: '0440'

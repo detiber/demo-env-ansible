@@ -1,0 +1,20 @@
+---
+- name: Create the IAM Profiles
+  cloudformation:
+    region: "{{ ec2_region }}"
+    stack_name: keynote-iam-{{ env_id }}-{{ cluster_id }}
+    state: present
+    tags:
+      KeynoteDemo: True
+      environment: "{{ env_id }}"
+      clusterid: "{{ cluster_id }}"
+    template: files/iam_cf.json
+  register: iam_cf_output
+
+- name: Store CloudFormation generated outputs as facts
+  set_fact:
+    demo_node_iam_profile: "{{ iam_cf_output.stack_outputs.NodeInstanceProfile }}"
+    demo_master_iam_profile: "{{ iam_cf_output.stack_outputs.MasterInstanceProfile }}"
+
+- debug: var=demo_node_iam_profile
+- debug: var=demo_master_iam_profile

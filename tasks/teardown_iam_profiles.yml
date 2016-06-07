@@ -1,0 +1,11 @@
+---
+- name: Create the IAM Profiles
+  cloudformation:
+    region: "{{ ec2_region }}"
+    stack_name: keynote-iam-{{ env_id }}-{{ cluster_id }}
+    state: absent
+    tags:
+      KeynoteDemo: True
+      environment: "{{ env_id }}"
+      clusterid: "{{ cluster_id }}"
+    template: files/iam_cf.json
