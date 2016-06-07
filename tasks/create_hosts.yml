@@ -33,16 +33,16 @@
       NumNodes: "{{ demo_num_nodes }}"
       NumInfra: "{{ demo_num_infra }}"
       MasterUserData: "{{ lookup('template', '../templates/user_data.j2') | b64encode }}"
-      MasterRootVolSize: 30
+      MasterRootVolSize: 50
       MasterDockerVolSize: 25
       MasterDockerVolType: gp2
       InfraUserData: "{{ lookup('template', '../templates/user_data.j2') | b64encode }}"
-      InfraRootVolSize: 30
-      InfraDockerVolSize: 25
+      InfraRootVolSize: 50
+      InfraDockerVolSize: 100
       InfraDockerVolType: gp2
       NodeUserData: "{{ lookup('template', '../templates/user_data.j2') | b64encode }}"
-      NodeRootVolSize: 30
-      NodeDockerVolSize: 25
+      NodeRootVolSize: 50
+      NodeDockerVolSize: 100
       NodeDockerVolType: gp2
       MasterInstanceProfile: "{{ demo_master_iam_profile | default('') }}"
       NodeInstanceProfile: "{{ demo_node_iam_profile | default('') }}"
