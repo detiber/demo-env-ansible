@@ -1,0 +1,25 @@
+---
+- name: Create the pipeline builder SA
+  shell: >
+    echo '{"kind": "ServiceAccount", "apiVersion": "v1", "metadata": {"name": "pipeline-builder", "namespace": "default" }}' | oc create -f -
+
+- name: Add the system:image-puller role
+  command: >
+    oadm policy add-cluster-role-to-user system:image-puller system:serviceaccount:default:pipeline-builder
+
+- name: Gather the generated secret names
+  command: >
+    oc get sa pipeline-builder -o jsonpath='{.secrets[*].name}'
+  register: pipeline_secret_names
+
+- name: Get the SA token secret
+  command: >
+    oc get secret {{ item.stdout }} -o json
+  with_items: pipeline_secret_names.results
+  when: 'pipeline-builder' in item.stdout
+  register: pipeline_secrets
+
+- name: Display the SA token secret
+  debug:
+    msg: "pipeline-builder token: {{ (pipeline_secrets.results.stdout | from_json).data.token }}"
+
