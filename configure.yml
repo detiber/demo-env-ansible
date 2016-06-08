@@ -27,3 +27,9 @@
   - include: tasks/repo_config.yml
 
 - include: openshift-ansible/playbooks/byo/openshift-cluster/config.yml
+
+- hosts: masters[0]
+  tags:
+  - post
+  tasks:
+  - include: tasks/pipeline_config.yml
