@@ -8,7 +8,7 @@
       KeynoteDemo: True
       environment: "{{ env_id }}"
       clusterid: "{{ cluster_id }}"
-    template: files/hosts_cf.json
+    template: files/cloudformation/hosts_cf.json
     template_parameters:
       MasterApiPort: "{{ demo_api_port }}"
       MasterSGs: "{{ demo_master_sg_ids }}"

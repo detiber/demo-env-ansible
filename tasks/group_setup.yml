@@ -11,6 +11,7 @@
       region: "{{ hostvars[item].ec2_region }}"
       zone: "{{ hostvars[item].ec2_placement }}"
   with_items: "{{ master_hosts }}"
+  changed_when: false
 
 - name: Add nodes to requisite groups
   add_host:
@@ -21,6 +22,7 @@
       region: "{{ hostvars[item].ec2_region }}"
       zone: "{{ hostvars[item].ec2_placement }}"
   with_items: "{{ node_hosts }}"
+  changed_when: false
 
 - name: Add infra nodes to requisite groups
   add_host:
@@ -31,3 +33,4 @@
       region: "{{ hostvars[item].ec2_region }}"
       zone: "{{ hostvars[item].ec2_placement }}"
   with_items: "{{ infra_hosts }}"
+  changed_when: false

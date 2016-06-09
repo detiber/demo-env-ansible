@@ -4,4 +4,4 @@
     region: "{{ ec2_region }}"
     stack_name: keynote-security-groups-{{ env_id }}-{{ cluster_id }}
     state: absent
-    template: files/sg_cf.json
+    template: files/cloudformation/sg_cf.json

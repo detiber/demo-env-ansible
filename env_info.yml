@@ -1,0 +1,69 @@
+---
+- hosts: localhost
+  gather_facts: no
+  become: no
+  connection: local
+  tags:
+  - always
+  vars:
+    env_cluster_hosts: "{{ groups['tag_environment_' ~ env_id]
+                           | intersect(groups['tag_clusterid_' ~ cluster_id]) }}"
+    master_hosts: "{{ groups['tag_environment_' ~ env_id]
+                      | intersect(groups['tag_clusterid_' ~ cluster_id]
+                                  | intersect( groups['tag_host-type_master'])) }}"
+    node_hosts: "{{ groups['tag_environment_' ~ env_id]
+                    | intersect(groups['tag_clusterid_' ~ cluster_id]
+                                | intersect(groups['tag_sub-host_type_compute'])) }}"
+    infra_hosts: "{{ groups['tag_environment_' ~ env_id]
+                     | intersect(groups['tag_clusterid_' ~ cluster_id]
+                                 | intersect(groups['tag_sub-host_type_infra'])) }}"
+  tasks:
+  - include: tasks/group_setup.yml
+
+  - set_fact:
+      env_info_filename: "~/keynote_demo_envs/{{ (['keynote',env_id,cluster_id] | join('_')) }}.txt"
+
+  - blockinfile:
+      dest: "{{ env_info_filename }}"
+      marker: "==={mark} Host Info ==="
+      create: yes
+      block: "SSH User: openshift\n\nMaster hosts:\n\t{{ master_hosts | join('\n\t') }}\nNode hosts:\n\t{{ node_hosts | join('\n\t') }}\nInfra hosts:\n\t{{ infra_hosts | join('\n\t') }}"
+
+- hosts: masters[0]
+  gather_facts: no
+  tags:
+  - always
+  vars:
+    env_info_filename: "{{ hostvars.localhost.env_info_filename }}"
+  tasks:
+  - name: Gather the generated secret names
+    command: "oc get sa pipeline-builder -o jsonpath='{.secrets[*].name}'"
+    register: pipeline_secret_names
+    changed_when: false
+
+  - name: Get the SA token secret
+    command: "oc get secret {{ pipeline_secret_names.stdout }} -o jsonpath='{range .items[?(@.data.token)]}{.metadata.name}{\": \"}{.data.token}{end}'"
+    changed_when: false
+    when: pipeline_secret_names.stdout != ''
+    register: pipeline_secrets
+
+  - local_action:
+      module: blockinfile
+      dest: "{{ env_info_filename }}"
+      marker: "==={mark} Service Account Info ==="
+      create: yes
+      block: "{{ pipeline_secrets.stdout }}"
+    become: no
+
+  - name: Grab the admin kubeconfig
+    slurp:
+      src: /etc/origin/master/admin.kubeconfig
+    register: admin_kubeconfig
+
+  - local_action:
+      module: blockinfile
+      dest: "{{ env_info_filename }}"
+      marker: "==={mark} Admin Kubeconfig ==="
+      create: yes
+      block: "{{ admin_kubeconfig.content | b64decode }}"
+    become: no

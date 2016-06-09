@@ -1,15 +1,21 @@
 ---
+- name: Get enabled repos
+  command: yum repolist
+  register: repolist
+  changed_when: false
+
 - name: Enable rhui extras channel
   command: yum-config-manager --enable rhui-REGION-rhel-server-extras
+  when: "'rhui-REGION-rhel-server-extras' not in repolist.stdout"
 
 - name: Create repo cert file
   copy:
     dest: /var/lib/yum/client-cert.pem
     content: "{{ demo_repo_cert_contents }}"
-  when: demo_repo_cert_contents is defined
+  when: "{{ demo_repo_cert_contents is defined }}"
 
 - name: Create repo key file
   copy:
     dest: /var/lib/yum/client-key.pem
     content: "{{ demo_repo_key_contents }}"
-  when: demo_repo_key_contents is defined
+  when: "{{ demo_repo_key_contents is defined }}"

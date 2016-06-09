@@ -8,7 +8,7 @@
       KeynoteDemo: True
       environment: "{{ env_id }}"
       clusterid: "{{ cluster_id }}"
-    template: files/iam_cf.json
+    template: files/cloudformation/iam_cf.json
   register: iam_cf_output
 
 - name: Store CloudFormation generated outputs as facts

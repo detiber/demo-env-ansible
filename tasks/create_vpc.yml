@@ -15,7 +15,7 @@
       KeynoteDemo: True
       environment: "{{ env_id }}"
       clusterid: "{{ cluster_id }}"
-    template: files/vpc_cf.json
+    template: files/cloudformation/vpc_cf.json
     template_parameters:
       VpcCidrBlock: "{{ demo_vpc_cidr }}"
       VpcName: keynote_demo_{{ env_id }}_{{ cluster_id }}

@@ -1,0 +1,52 @@
+---
+- hosts: localhost
+  gather_facts: no
+  become: no
+  connection: local
+  tags:
+  - always
+  vars:
+    env_cluster_hosts: "{{ groups['tag_environment_' ~ env_id]
+                           | intersect(groups['tag_clusterid_' ~ cluster_id]) }}"
+    master_hosts: "{{ groups['tag_environment_' ~ env_id]
+                      | intersect(groups['tag_clusterid_' ~ cluster_id]
+                                  | intersect( groups['tag_host-type_master'])) }}"
+    node_hosts: "{{ groups['tag_environment_' ~ env_id]
+                    | intersect(groups['tag_clusterid_' ~ cluster_id]
+                                | intersect(groups['tag_sub-host_type_compute'])) }}"
+    infra_hosts: "{{ groups['tag_environment_' ~ env_id]
+                     | intersect(groups['tag_clusterid_' ~ cluster_id]
+                                 | intersect(groups['tag_sub-host_type_infra'])) }}"
+  tasks:
+  - include: tasks/group_setup.yml
+
+- hosts: masters[0]
+  tags:
+  - post
+  tasks:
+  - name: Create the new imagestreams
+    shell: >
+      echo {{ lookup('file', item) | from_json | to_json | quote }} | oc create -n openshift -f -
+    register: create_is
+    failed_when: "create_is.rc == 1 and 'already exists' not in create_is.stderr"
+    changed_when: create_is.rc ==0
+    with_fileglob:
+    - files/imagestreams/*.json
+
+  - name: Create the pipeline builder SA
+    shell: >
+      echo '{"kind": "ServiceAccount", "apiVersion": "v1", "metadata": {"name": "pipeline-builder", "namespace": "default" }}' | oc create -f -
+    register: create_sa
+    changed_when: create_sa.rc == 0
+    failed_when: "create_sa.rc == 1 and 'already exists' not in create_sa.stderr"
+
+  - name: Add the system:image-puller role
+    command: >
+      oadm policy add-cluster-role-to-user system:image-puller system:serviceaccount:default:pipeline-builder
+    when: create_sa | changed
+
+  # TODO: determine the proper permissions rather than adding cluster-admin
+  - name: Add the system:image-puller role
+    command: >
+      oadm policy add-cluster-role-to-user cluster-admin system:serviceaccount:default:pipeline-builder
+    when: create_sa | changed

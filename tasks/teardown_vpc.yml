@@ -4,4 +4,4 @@
     region: "{{ ec2_region }}"
     stack_name: keynote-vpc-{{ env_id }}-{{ cluster_id }}
     state: absent
-    template: files/vpc_cf.json
+    template: files/cloudformation/vpc_cf.json

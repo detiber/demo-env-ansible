@@ -20,14 +20,12 @@
   tasks:
   - include: tasks/group_setup.yml
 
-- include: pre_configure.yml
+- hosts: cluster_hosts
   tags:
   - pre
-
-- include: openshift-ansible/playbooks/byo/openshift-cluster/config.yml
-  tags:
-  - config
-
-- include: post_configure.yml
-  tags:
-  - post
+  tasks:
+  - include: tasks/repo_config.yml
+  - lineinfile:
+      dest: .ssh/authorized_keys
+      line: "{{ item }}"
+    with_items: demo_additional_ssh_keys

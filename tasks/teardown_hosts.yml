@@ -4,4 +4,4 @@
     region: "{{ ec2_region }}"
     stack_name: keynote-hosts-{{ env_id }}-{{ cluster_id }}
     state: absent
-    template: files/hosts_cf.json
+    template: files/cloudformation/hosts_cf.json
