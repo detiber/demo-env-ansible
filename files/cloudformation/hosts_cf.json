@@ -152,6 +152,9 @@
           "Timeout" : "2",
           "UnhealthyThreshold" : "2"
         },
+        "ConnectionSettings":{
+          "IdleTimeout": 3600
+        },
         "Listeners":[
           {
             "InstancePort": { "Ref" : "MasterApiPort" },
@@ -175,6 +178,9 @@
           "Target" : { "Fn::Join": [ ":", [ "TCP", { "Ref": "MasterApiPort" } ] ] },
           "Timeout" : "2",
           "UnhealthyThreshold" : "2"
+        },
+        "ConnectionSettings":{
+          "IdleTimeout": 3600
         },
         "Listeners":[
           {
