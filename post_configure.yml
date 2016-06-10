@@ -50,3 +50,13 @@
     command: >
       oadm policy add-cluster-role-to-user cluster-admin system:serviceaccount:default:pipeline-builder
     when: create_sa | changed
+
+- hosts: nodes
+  tags:
+  - post
+  tasks:
+  - name: Pre-pull docker images
+    command: "docker pull {{ item }}"
+    with_items:
+    - jboss-eap-7/eap70-openshift
+    - rhscl/nodejs-4-rhel7
