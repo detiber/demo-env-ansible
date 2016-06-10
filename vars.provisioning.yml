@@ -3,7 +3,7 @@
 ec2_region: us-east-1
 #ec2_region: us-west-1
 ec2:
-  default_instance_type: m4.large
+  default_instance_type: m4.xlarge
   us-east-1:
     default_ami: ami-10251c7a
   us-west-1:
@@ -30,9 +30,9 @@ demo_master_ami: "{{ ec2[ec2_region].default_ami }}"
 demo_node_ami: "{{ ec2[ec2_region].default_ami }}"
 demo_infra_ami: "{{ ec2[ec2_region].default_ami }}"
 demo_master_instance_type: "{{ ec2.default_instance_type }}"
-demo_node_instance_type: "{{ ec2.default_instance_type }}"
+demo_node_instance_type: m4.2xlarge
 demo_infra_instance_type: "{{ ec2.default_instance_type }}"
 demo_num_masters: 3
-demo_num_infra: 2
-demo_num_nodes: 3
+demo_num_infra: 3
+demo_num_nodes: 10
 demo_keypair: keynote-demo
