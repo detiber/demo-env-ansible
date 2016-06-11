@@ -3,8 +3,6 @@
   gather_facts: no
   become: no
   connection: local
-  vars_files:
-  - vars.provisioning.yml
   tasks:
   - include: tasks/create_vpc.yml
     when: demo_create_vpc | default(False) | bool

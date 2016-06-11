@@ -1,0 +1,88 @@
+---
+# EC2 Defaults
+ec2:
+  default_instance_type: m4.xlarge
+  us-east-1:
+    default_ami: ami-10251c7a
+  us-west-1:
+    default_ami: ami-54ea9a34
+
+# VPC Settings
+demo_create_vpc: yes
+demo_vpc_cidr: 172.18.0.0/16
+demo_vpc_subnet_cidrs:
+- 172.18.1.0/24
+- 172.18.2.0/24
+- 172.18.3.0/24
+- 172.18.4.0/24
+
+# Security Group Settings
+demo_create_sgs: yes
+
+# IAM Profile Settings
+demo_create_iam_profiles: yes
+
+# Host Settings
+demo_create_hosts: yes
+demo_master_ami: "{{ ec2[ec2_region].default_ami }}"
+demo_node_ami: "{{ ec2[ec2_region].default_ami }}"
+demo_infra_ami: "{{ ec2[ec2_region].default_ami }}"
+demo_master_instance_type: "{{ ec2.default_instance_type }}"
+demo_node_instance_type: m4.2xlarge
+demo_infra_instance_type: "{{ ec2.default_instance_type }}"
+demo_keypair: keynote-demo
+
+# Demo deployment settings
+demo_api_port: 443
+demo_route_53_subdomain: "{{ cluster_id }}.{{ env_id }}.{{ demo_route_53_zone }}"
+deployment_type: openshift-enterprise
+openshift_cloudprovider_kind: aws
+
+openshift_master_identity_providers:
+- name: htpasswd_auth
+  login: true
+  challenge: true
+  kind: HTPasswdPasswordIdentityProvider
+  filename: /etc/origin/master/htpasswd
+- name: github
+  challenge: false
+  login: true
+  mappingMethod: claim
+  kind: GitHubIdentityProvider
+  clientID: "{{ demo_github_clientid }}"
+  clientSecret: "{{ demo_github_clientsecret }}"
+  organizations: "{{ demo_github_organizations }}"
+openshift_master_access_token_max_seconds: 2419200
+openshift_master_api_port: "{{ demo_api_port }}"
+openshift_master_console_port: "{{ demo_api_port }}"
+openshift_master_logging_public_url: "https://kibana.apps.{{ demo_route_53_subdomain }}"
+openshift_master_metrics_public_url: "https://metrics.apps.{{ demo_route_53_subdomain }}/hawkular/metrics"
+osm_cluster_network_cidr: 10.0.0.0/8
+osm_host_subnet_length: 16
+osm_default_subdomain: "apps.{{ demo_route_53_subdomain }}"
+openshift_master_cluster_method: native
+openshift_master_cluster_hostname: "openshift.internal.{{ demo_route_53_subdomain }}"
+openshift_master_cluster_public_hostname: "openshift.{{ demo_route_53_subdomain }}"
+osm_default_node_selector: "node_type=compute"
+openshift_master_scheduler_predicates:
+- name: MatchNodeSelector
+- name: PodFitsResources
+- name: PodFitsHostPorts
+- name: NoDiskConflict
+- name: NoVolumeZoneConflict
+- name: MaxEBSVolumeCount
+
+openshift_node_profile: web
+
+openshift_hosted_infra_selector: "node_type=infra"
+openshift_hosted_registry_storage_kind: object
+openshift_hosted_registry_storage_provider: s3
+openshift_hosted_registry_storage_s3_accesskey: "{{ demo_registry_s3_accesskey }}"
+openshift_hosted_registry_storage_s3_secretkey: "{{ demo_registry_s3_secretkey }}"
+openshift_hosted_registry_storage_s3_bucket: "{{ demo_registry_s3_bucket_prefix }}_{{ env_id }}_{{ cluster_id }}"
+openshift_hosted_registry_storage_s3_region: "{{ ec2_region }}"
+openshift_hosted_registry_storage_s3_create: yes
+openshift_hosted_metrics_storage_kind: dynamic
+openshift_hosted_metrics_storage_volume_size: 100Gi
+openshift_hosted_metrics_deployer_prefix: detiber/origin-
+openshift_hosted_metrics_deployer_version: v1.2.0-dynamic
