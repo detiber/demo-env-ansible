@@ -1,0 +1,9 @@
+- hosts: localhost
+  connection: local
+  become: no
+  gather_facts: no
+  vars:
+    demo_pipeline_github_user: "{{ lookup('env', PIPELINE_GITHUB_USER) }}"
+    demo_pipeline_github_password: "{{ lookup('env', PIPELINE_GITHUB_PASSWORD) }}"
+  tasks:
+  - include: tasks/create_projects.yml

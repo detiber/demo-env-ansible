@@ -33,6 +33,7 @@
     with_fileglob:
     - files/imagestreams/*.json
 
+
   - name: Create the pipeline builder SA
     shell: >
       echo '{"kind": "ServiceAccount", "apiVersion": "v1", "metadata": {"name": "pipeline-builder", "namespace": "default" }}' | oc create -f -
@@ -50,6 +51,10 @@
     command: >
       oadm policy add-cluster-role-to-user cluster-admin system:serviceaccount:default:pipeline-builder
     when: create_sa | changed
+
+  - name: Create the projects
+    include: tasks/create_projects.yml
+
 
 - hosts: nodes
   tags:
