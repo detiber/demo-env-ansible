@@ -260,6 +260,12 @@
         ]
       }
     },
+    "ClusterPlacementGroup": {
+      "Type" : "AWS::EC2::PlacementGroup",
+      "Properties" : {
+        "Strategy" : "cluster"
+      }
+    },
     "InfraLC": {
       "Type": "AWS::AutoScaling::LaunchConfiguration",
       "Properties": {
@@ -391,6 +397,7 @@
             "PropagateAtLaunch": true
           }
         ],
+	"PlacementGroup": { "Ref": "ClusterPlacementGroup" },
         "VPCZoneIdentifier": { "Ref": "Subnets" }
       }
     },
@@ -416,6 +423,7 @@
             "PropagateAtLaunch": true
           }
         ],
+	"PlacementGroup": { "Ref": "ClusterPlacementGroup" },
         "VPCZoneIdentifier": { "Ref": "Subnets" }
       }
     },
@@ -445,6 +453,7 @@
             "PropagateAtLaunch": true
           }
         ],
+	"PlacementGroup": { "Ref": "ClusterPlacementGroup" },
         "VPCZoneIdentifier": { "Ref": "Subnets" }
       }
     }

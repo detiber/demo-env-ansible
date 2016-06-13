@@ -1,6 +1,6 @@
 ---
 - set_fact:
-    ec2_zones: "{{ lookup('ec2_zones_by_region', ec2_region) }}"
+    ec2_zones: "{{ (lookup('ec2_zones_by_region', ec2_region) | oo_split(',')).0 }}"
   when: ec2_zones is not defined
 
 - set_fact:
