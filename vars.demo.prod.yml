@@ -7,5 +7,4 @@ env_id: prod
 cluster_id: demo
 # TODO: prod is currently hardcoded for a single bucket, needs to start using
 # the default naming
-openshift_hosted_registry_storage_s3_bucket: "{{ demo_registry_s3_bucket }}"
 openshift_hosted_metrics_cassandra_nodes: 1

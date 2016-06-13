@@ -24,6 +24,16 @@
   tags:
   - pre
 
+- hosts: localhost
+  connection: local
+  become: no
+  gather_facts: no
+  tags:
+  - always
+  tasks:
+  - fail: msg="Cluster protected"
+    when: "{{ cluster_id == 'demo' and env_id == 'prod' }}"
+
 - include: openshift-ansible/playbooks/byo/openshift-cluster/config.yml
   tags:
   - config

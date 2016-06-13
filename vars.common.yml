@@ -77,10 +77,6 @@ openshift_node_profile: web
 openshift_hosted_infra_selector: "node_type=infra"
 openshift_hosted_registry_storage_kind: object
 openshift_hosted_registry_storage_provider: s3
-openshift_hosted_registry_storage_s3_accesskey: "{{ demo_registry_s3_accesskey }}"
-openshift_hosted_registry_storage_s3_secretkey: "{{ demo_registry_s3_secretkey }}"
-openshift_hosted_registry_storage_s3_bucket: "{{ demo_registry_s3_bucket_prefix }}_{{ env_id }}_{{ cluster_id }}"
-openshift_hosted_registry_storage_s3_region: "{{ ec2_region }}"
 openshift_hosted_registry_storage_s3_create: yes
 openshift_hosted_metrics_storage_kind: dynamic
 openshift_hosted_metrics_storage_volume_size: 100Gi

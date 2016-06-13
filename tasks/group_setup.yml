@@ -2,6 +2,9 @@
   wait_for: "port=22 host={{ item }}"
   with_items: "{{ env_cluster_hosts }}"
 
+- set_fact:
+    openshift_hosted_registry_storage_s3_bucket: "{{ demo_registry_storage_s3_bucket }}"
+
 - name: Add masters to requisite groups
   add_host:
     name: "{{ item }}"
@@ -10,6 +13,7 @@
       node_type: master
       region: "{{ hostvars[item].ec2_region }}"
       zone: "{{ hostvars[item].ec2_placement }}"
+    openshift_hosted_registry_storage_s3_bucket: "{{ demo_registry_storage_s3_bucket }}"
   with_items: "{{ master_hosts }}"
   changed_when: false
 
@@ -21,6 +25,7 @@
       node_type: compute
       region: "{{ hostvars[item].ec2_region }}"
       zone: "{{ hostvars[item].ec2_placement }}"
+    openshift_hosted_registry_storage_s3_bucket: "{{ demo_registry_storage_s3_bucket }}"
   with_items: "{{ node_hosts }}"
   changed_when: false
 
@@ -32,5 +37,6 @@
       node_type: infra
       region: "{{ hostvars[item].ec2_region }}"
       zone: "{{ hostvars[item].ec2_placement }}"
+    openshift_hosted_registry_storage_s3_bucket: "{{ demo_registry_storage_s3_bucket }}"
   with_items: "{{ infra_hosts }}"
   changed_when: false
