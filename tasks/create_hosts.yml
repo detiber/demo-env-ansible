@@ -22,10 +22,10 @@
       NodeImageId: "{{ demo_node_ami }}"
       InfraImageId: "{{ demo_infra_ami }}"
       Route53HostedZone: "{{ demo_route_53_zone }}."
-      AppWildcardDomain: "*.apps.{{ demo_route_53_subdomain }}"
+      AppWildcardDomain: "*.{{ osm_default_subdomain }}"
       KeyName: "{{ demo_keypair }}"
-      MasterClusterPublicHostname: "openshift.{{ demo_route_53_subdomain }}"
-      MasterClusterHostname: "openshift.internal.{{ demo_route_53_subdomain }}"
+      MasterClusterPublicHostname: "{{ openshift_master_cluster_public_hostname }}"
+      MasterClusterHostname: "{{ openshift_master_cluster_hostname }}"
       MasterInstanceType: "{{ demo_master_instance_type }}"
       NodeInstanceType: "{{ demo_node_instance_type }}"
       InfraInstanceType: "{{ demo_infra_instance_type }}"
@@ -46,4 +46,6 @@
       NodeDockerVolType: gp2
       MasterInstanceProfile: "{{ demo_master_iam_profile | default('') }}"
       NodeInstanceProfile: "{{ demo_node_iam_profile | default('') }}"
+      MetricsDnsName: "{{ demo_metrics_dns }}"
+      LoggingDnsName: "{{ demo_logging_dns }}"
   register: hosts_cf_output

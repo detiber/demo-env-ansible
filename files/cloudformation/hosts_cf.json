@@ -134,6 +134,12 @@
     "NodeInstanceProfile": {
       "Type": "String",
       "Default": ""
+    },
+    "MetricsDnsName": {
+      "Type": "String"
+    },
+    "LoggingDnsName": {
+      "Type": "String"
     }
   },
   "Conditions": {
@@ -251,6 +257,22 @@
           },
           {
             "Name": { "Ref": "AppWildcardDomain" },
+            "Type": "A",
+            "AliasTarget": {
+                "HostedZoneId": { "Fn::GetAtt" : ["InfraElb", "CanonicalHostedZoneNameID"] },
+                "DNSName": { "Fn::GetAtt" : ["InfraElb","CanonicalHostedZoneName"] }
+            }
+          },
+          {
+            "Name": { "Ref": "MetricsDnsName" },
+            "Type": "A",
+            "AliasTarget": {
+                "HostedZoneId": { "Fn::GetAtt" : ["InfraElb", "CanonicalHostedZoneNameID"] },
+                "DNSName": { "Fn::GetAtt" : ["InfraElb","CanonicalHostedZoneName"] }
+            }
+          },
+          {
+            "Name": { "Ref": "LoggingDnsName" },
             "Type": "A",
             "AliasTarget": {
                 "HostedZoneId": { "Fn::GetAtt" : ["InfraElb", "CanonicalHostedZoneNameID"] },

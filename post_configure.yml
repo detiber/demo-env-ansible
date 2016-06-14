@@ -55,7 +55,6 @@
   - name: Create the projects
     include: tasks/create_projects.yml
 
-
 - hosts: nodes
   tags:
   - post
