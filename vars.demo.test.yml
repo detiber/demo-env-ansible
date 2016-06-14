@@ -1,8 +1,8 @@
 ---
 ec2_region: us-east-1
 demo_num_masters: 3
-demo_num_infra: 1
-demo_num_nodes: 1
+demo_num_infra: 3
+demo_num_nodes: 10
 env_id: test
 cluster_id: demo
 openshift_hosted_metrics_cassandra_nodes: 1
