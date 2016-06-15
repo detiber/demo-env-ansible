@@ -1,0 +1,41 @@
+---
+- name: Create the Gogs project
+  command: oadm new-project gogs
+  register: gogs_project
+  failed_when: "{{ gogs_project.rc == 1 and 'already exists' not in gogs_project.stderr }}"
+  changed_when: "{{ gogs_project.rc == 0 }}"
+
+- name: Add the anyuid SCC to the gogs:default serviceaccount
+  command: oadm -n gogs policy add-scc-to-user anyuid -z default
+
+- name: Query existing PVs
+  command: oc get pv gogs-volume -o json
+  register: current_pv
+  changed_when: false
+  failed_when: current_pv.rc != 0 and 'not found' not in current_pv.stderr
+
+- name: Delete existing pv if needed
+  command: oc delete pv gogs-volume
+  when: "{{ current_pv.rc == 0 and (current_pv.stdout | from_json).status.phase == 'Released' }}"
+
+
+- name: Create Persistent Volume
+  shell: >
+    echo '{"kind": "PersistentVolume", "apiVersion": "v1", "metadata": {"name": "gogs-volume"}, "spec": {"accessModes": ["ReadWriteOnce"], "awsElasticBlockStore": {"fsType": "xfs", "volumeID": "{{ demo_gogs_volume}}"}, "capacity": {"storage": "10Gi"}}}' | oc create -f -
+  register: gogs_pv
+  failed_when: "{{ gogs_pv.rc == 1 and 'already exists' not in gogs_pv.stderr }}"
+  changed_when: "{{ gogs_pv.rc == 0 }}"
+
+- name: Create Persistent Volume Claim
+  shell: >
+    echo '{"kind": "PersistentVolumeClaim", "apiVersion": "v1", "metadata": {"name": "gogs-claim", "labels": {"application": "gogs"}, "namespace": "gogs"}, "spec": {"accessModes": ["ReadWriteOnce"], "resources": {"requests": {"storage": "10Gi"}}}}' | oc create -n gogs -f -
+  register: gogs_pvc
+  failed_when: "{{ gogs_pvc.rc == 1 and 'already exists' not in gogs_pvc.stderr }}"
+  changed_when: "{{ gogs_pvc.rc == 0 }}"
+
+- name: Create the gogs deployment config
+  shell: >
+    echo {{ lookup('template', 'templates/gogs.yml') | from_yaml | to_json | quote }} | oc create -n gogs -f -
+  register: gogs_dc
+  failed_when: "{{ gogs_dc.rc == 1 and 'already exists' not in gogs_dc.stderr }}"
+  changed_when: "{{ gogs_dc.rc == 0 }}"

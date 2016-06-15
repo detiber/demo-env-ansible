@@ -23,6 +23,10 @@
 - hosts: masters[0]
   tags:
   - post
+  roles:
+  - gogs
+  - pipeline
+  - che
   tasks:
   - name: Create the new imagestreams
     shell: >
@@ -32,28 +36,6 @@
     changed_when: create_is.rc ==0
     with_fileglob:
     - files/imagestreams/*.json
-
-
-  - name: Create the pipeline builder SA
-    shell: >
-      echo '{"kind": "ServiceAccount", "apiVersion": "v1", "metadata": {"name": "pipeline-builder", "namespace": "default" }}' | oc create -f -
-    register: create_sa
-    changed_when: create_sa.rc == 0
-    failed_when: "create_sa.rc == 1 and 'already exists' not in create_sa.stderr"
-
-  - name: Add the system:image-puller role
-    command: >
-      oadm policy add-cluster-role-to-user system:image-puller system:serviceaccount:default:pipeline-builder
-    when: create_sa | changed
-
-  # TODO: determine the proper permissions rather than adding cluster-admin
-  - name: Add the system:image-puller role
-    command: >
-      oadm policy add-cluster-role-to-user cluster-admin system:serviceaccount:default:pipeline-builder
-    when: create_sa | changed
-
-  - name: Create the projects
-    include: tasks/create_projects.yml
 
 - hosts: nodes
   tags:

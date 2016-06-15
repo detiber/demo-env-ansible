@@ -33,6 +33,12 @@ demo_infra_instance_type: "{{ ec2.default_instance_type }}"
 demo_keypair: keynote-demo
 
 # Demo deployment settings
+demo_pipeline_projects:
+- development
+- qa
+- staging
+- production
+
 demo_api_port: 443
 demo_route_53_subdomain: "{{ demo_route_53_zone }}"
 deployment_type: openshift-enterprise

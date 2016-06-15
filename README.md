@@ -1,13 +1,4 @@
 # demo-env-ansible
-
-Running the adhoc_create_projects.yml playbook:
-```
-export PIPELINE_GITHUB_USER=<pipeline github user>
-export PIPELINE_GITHUB_PASSWORD=<pipeline github password>
-ansible-playbook adhoc_create_projects.yml
-```
-
-
 Running locally:
 
 - Export the needed variables:
