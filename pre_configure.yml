@@ -23,9 +23,12 @@
 - hosts: cluster_hosts
   tags:
   - pre
-  tasks:
+  pre_tasks:
   - include: tasks/repo_config.yml
   - lineinfile:
       dest: .ssh/authorized_keys
       line: "{{ item }}"
     with_items: demo_additional_ssh_keys
+  roles:
+  - role: collectd
+    when: demo_monitoring_host is defined

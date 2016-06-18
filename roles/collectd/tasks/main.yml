@@ -1,0 +1,28 @@
+---
+- name: Install EPEL
+  package:
+    name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+    state: installed
+
+- name: Install collectd
+  package:
+    name: collectd
+    state: installed
+
+- name: Allow collectd to network connect
+  seboolean:
+    name: collectd_tcp_network_connect
+    state: yes
+    persistent: yes
+
+- name: Copy the collectd config
+  template:
+    src: collectd.conf
+    dest: /etc/collectd.conf
+  notify: restart collectd
+
+- name: Enable and start the collectd service
+  service:
+    name: collectd
+    enabled: yes
+    state: started
