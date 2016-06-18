@@ -39,6 +39,12 @@ demo_pipeline_projects:
 - staging
 - production
 
+#demo_private_registry_images:
+#- name: vertx-s2i
+#  image: "{{ demo_private_registry_url }}/keynote/vertx-s2i:latest"
+#- name: nodejs4
+#  image: "{{ demo_private_registry_url }}/keynote/nodejs-4-rhel:latest"
+
 demo_api_port: 443
 demo_route_53_subdomain: "{{ demo_route_53_zone }}"
 deployment_type: openshift-enterprise
@@ -90,3 +96,7 @@ openshift_hosted_metrics_storage_kind: dynamic
 openshift_hosted_metrics_storage_volume_size: 100Gi
 openshift_hosted_metrics_deployer_prefix: detiber/origin-
 openshift_hosted_metrics_deployer_version: v1.2.0-dynamic
+
+openshift_node_dnsmasq_max_ttl: 60
+openshift_node_dnsmasq_max_cache_size: 1024
+openshift_node_dnsmasq_forward_max: 500
