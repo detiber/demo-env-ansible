@@ -156,6 +156,14 @@
     "AdditionalAppAlias4": {
       "Type": "String",
       "Default": ""
+    },
+    "AdditionalAppAlias5": {
+      "Type": "String",
+      "Default": ""
+    },
+    "AdditionalAppAlias6": {
+      "Type": "String",
+      "Default": ""
     }
   },
   "Conditions": {
@@ -164,7 +172,9 @@
     "UseAdditionalAppAlias1": {"Fn::Not": [{"Fn::Equals" : [{"Ref" : "AdditionalAppAlias1"}, ""]}]},
     "UseAdditionalAppAlias2": {"Fn::Not": [{"Fn::Equals" : [{"Ref" : "AdditionalAppAlias2"}, ""]}]},
     "UseAdditionalAppAlias3": {"Fn::Not": [{"Fn::Equals" : [{"Ref" : "AdditionalAppAlias3"}, ""]}]},
-    "UseAdditionalAppAlias4": {"Fn::Not": [{"Fn::Equals" : [{"Ref" : "AdditionalAppAlias4"}, ""]}]}
+    "UseAdditionalAppAlias4": {"Fn::Not": [{"Fn::Equals" : [{"Ref" : "AdditionalAppAlias4"}, ""]}]},
+    "UseAdditionalAppAlias5": {"Fn::Not": [{"Fn::Equals" : [{"Ref" : "AdditionalAppAlias5"}, ""]}]},
+    "UseAdditionalAppAlias6": {"Fn::Not": [{"Fn::Equals" : [{"Ref" : "AdditionalAppAlias6"}, ""]}]}
   },
   "Resources": {
     "MasterIntElb": {
@@ -352,6 +362,38 @@
               "UseAdditionalAppAlias4",
 	      {
 	        "Name": { "Ref": "AdditionalAppAlias4" },
+                "Type": "A",
+                "AliasTarget": {
+                  "HostedZoneId": { "Fn::GetAtt" : ["InfraElb", "CanonicalHostedZoneNameID"] },
+                  "DNSName": { "Fn::GetAtt" : ["InfraElb","CanonicalHostedZoneName"] }
+                }
+	      },
+              {
+                "Ref" : "AWS::NoValue"
+              }
+	    ]
+	  },
+	  {
+            "Fn::If": [
+              "UseAdditionalAppAlias5",
+	      {
+	        "Name": { "Ref": "AdditionalAppAlias5" },
+                "Type": "A",
+                "AliasTarget": {
+                  "HostedZoneId": { "Fn::GetAtt" : ["InfraElb", "CanonicalHostedZoneNameID"] },
+                  "DNSName": { "Fn::GetAtt" : ["InfraElb","CanonicalHostedZoneName"] }
+                }
+	      },
+              {
+                "Ref" : "AWS::NoValue"
+              }
+	    ]
+	  },
+	  {
+            "Fn::If": [
+              "UseAdditionalAppAlias6",
+	      {
+	        "Name": { "Ref": "AdditionalAppAlias6" },
                 "Type": "A",
                 "AliasTarget": {
                   "HostedZoneId": { "Fn::GetAtt" : ["InfraElb", "CanonicalHostedZoneNameID"] },
