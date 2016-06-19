@@ -140,6 +140,18 @@
     },
     "LoggingDnsName": {
       "Type": "String"
+    },
+    "AdditionalAppAlias1": {
+      "Type": "String"
+    },
+    "AdditionalAppAlias2": {
+      "Type": "String"
+    },
+    "AdditionalAppAlias3": {
+      "Type": "String"
+    },
+    "AdditionalAppAlias4": {
+      "Type": "String"
     }
   },
   "Conditions": {
@@ -278,7 +290,59 @@
                 "HostedZoneId": { "Fn::GetAtt" : ["InfraElb", "CanonicalHostedZoneNameID"] },
                 "DNSName": { "Fn::GetAtt" : ["InfraElb","CanonicalHostedZoneName"] }
             }
-          }
+          },
+	  {
+            "Fn::If": [
+              "AdditionalAppAlias1",
+	      {
+	        "Name": { "Ref": "AdditionalAppAlias1" },
+                "Type": "A",
+                "AliasTarget": {
+                  "HostedZoneId": { "Fn::GetAtt" : ["InfraElb", "CanonicalHostedZoneNameID"] },
+                  "DNSName": { "Fn::GetAtt" : ["InfraElb","CanonicalHostedZoneName"] }
+                }
+	      }
+	    ]
+	  },
+	  {
+            "Fn::If": [
+              "AdditionalAppAlias2",
+	      {
+	        "Name": { "Ref": "AdditionalAppAlias2" },
+                "Type": "A",
+                "AliasTarget": {
+                  "HostedZoneId": { "Fn::GetAtt" : ["InfraElb", "CanonicalHostedZoneNameID"] },
+                  "DNSName": { "Fn::GetAtt" : ["InfraElb","CanonicalHostedZoneName"] }
+                }
+	      }
+	    ]
+	  },
+	  {
+            "Fn::If": [
+              "AdditionalAppAlias3",
+	      {
+	        "Name": { "Ref": "AdditionalAppAlias3" },
+                "Type": "A",
+                "AliasTarget": {
+                  "HostedZoneId": { "Fn::GetAtt" : ["InfraElb", "CanonicalHostedZoneNameID"] },
+                  "DNSName": { "Fn::GetAtt" : ["InfraElb","CanonicalHostedZoneName"] }
+                }
+	      }
+	    ]
+	  },
+	  {
+            "Fn::If": [
+              "AdditionalAppAlias4",
+	      {
+	        "Name": { "Ref": "AdditionalAppAlias4" },
+                "Type": "A",
+                "AliasTarget": {
+                  "HostedZoneId": { "Fn::GetAtt" : ["InfraElb", "CanonicalHostedZoneNameID"] },
+                  "DNSName": { "Fn::GetAtt" : ["InfraElb","CanonicalHostedZoneName"] }
+                }
+	      }
+	    ]
+	  }
         ]
       }
     },

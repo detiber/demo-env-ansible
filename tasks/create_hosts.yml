@@ -48,4 +48,6 @@
       NodeInstanceProfile: "{{ demo_node_iam_profile | default('') }}"
       MetricsDnsName: "{{ demo_metrics_dns }}"
       LoggingDnsName: "{{ demo_logging_dns }}"
+      AdditionalAppAlias1: "{{ demo_additional_app_alias1 }}"
+      AdditionalAppAlias2: "{{ demo_additional_app_alias2 }}"
   register: hosts_cf_output

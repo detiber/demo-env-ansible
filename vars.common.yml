@@ -69,6 +69,8 @@ openshift_master_api_port: "{{ demo_api_port }}"
 openshift_master_console_port: "{{ demo_api_port }}"
 demo_metrics_dns: "metrics{{ demo_env_name_suffix }}.{{ demo_route_53_subdomain }}"
 demo_logging_dns: "kibana{{ demo_env_name_suffix }}.{{ demo_route_53_subdomain }}"
+demo_additional_app_alias1: "ui{{ demo_env_name_suffix }}.{{ demo_route_53_subdomain }}"
+demo_additional_app_alias2: "che{{ demo_env_name_suffix }}.{{ demo_route_53_subdomain }}"
 openshift_master_logging_public_url: "https://{{ demo_logging_dns }}"
 openshift_master_metrics_public_url: "https://{{ demo_metrics_dns }}/hawkular/metrics"
 osm_cluster_network_cidr: 10.0.0.0/8
