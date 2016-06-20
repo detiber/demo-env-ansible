@@ -1,0 +1,20 @@
+---
+- name: Create the che oauth client
+  shell: >
+    echo '{"kind": "OAuthClient", "apiVersion": "v1", "metadata": {"name": "che"}, "secret": "{{ demo_che_oauth_secret }}", "redirectURIs": ["{{ demo_che_oauth_redirect_uri }}"]}' | oc create -f -
+  register: che_oauth
+  failed_when: "{{ che_oauth.rc == 1 and 'already exists' not in che_oauth.stderr }}"
+  changed_when: "{{ che_oauth.rc == 0 }}"
+
+- name: Create the che project
+  command: oadm new-project che-proxy
+  register: che_project
+  failed_when: "{{ che_project.rc == 1 and 'already exists' not in che_project.stderr }}"
+  changed_when: "{{ che_project.rc == 0 }}"
+
+#- name: Create the che-proxy template
+#  shell: >
+#    echo {{ lookup('file', 'che_proxy.yml') | from_yaml | to_json | quote }} |  oc create -n che-proxy -f -
+#  register: che_template
+#  failed_when: "{{ che_template.rc == 1 and 'already exists' not in che_template.stderr }}"
+#  changed_when: "{{ che_template.rc == 0 }}"

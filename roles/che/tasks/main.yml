@@ -1,7 +1,0 @@
----
-- name: Create the che oauth client
-  shell: >
-    echo '{"kind": "OAuthClient", "apiVersion": "v1", "metadata": {"name": "che"}, "secret": "{{ demo_che_oauth_secret }}", "redirectURIs": ["{{ demo_che_oauth_redirect_uri }}"]}' | oc create -f -
-  register: che_oauth
-  failed_when: "{{ che_oauth.rc == 1 and 'already exists' not in che_oauth.stderr }}"
-  changed_when: "{{ che_oauth.rc == 0 }}"

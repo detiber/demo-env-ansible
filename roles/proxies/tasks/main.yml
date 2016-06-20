@@ -1,0 +1,8 @@
+---
+- name: Create the s2i-nginx imagestream
+  command: >
+    oc import-image -n openshift s2i-nginx-test
+    --from={{ demo_ui_nginx_image}} --all --confirm
+
+- include: ui.yml
+- include: che.yml

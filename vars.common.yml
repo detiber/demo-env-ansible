@@ -45,6 +45,9 @@ demo_pipeline_projects:
 #- name: nodejs4
 #  image: "{{ demo_private_registry_url }}/keynote/nodejs-4-rhel:latest"
 
+demo_ui_nginx_image: detiber/s2i-nginx
+demo_ui_replicas: 1
+
 demo_api_port: 443
 demo_route_53_subdomain: "{{ demo_route_53_zone }}"
 deployment_type: openshift-enterprise
