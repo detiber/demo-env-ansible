@@ -38,15 +38,28 @@ demo_pipeline_projects:
 - qa
 - staging
 - production
+- demo
 
-#demo_private_registry_images:
-#- name: vertx-s2i
-#  image: "{{ demo_private_registry_url }}/keynote/vertx-s2i:latest"
-#- name: nodejs4
-#  image: "{{ demo_private_registry_url }}/keynote/nodejs-4-rhel:latest"
+demo_private_registry_images:
+- name: vertx-s2i
+  image: "{{ demo_private_registry_url }}/keynote/vertx-s2i:latest"
+- name: nodejs4-imagemagick
+  image: "{{ demo_private_registry_url }}/keynote/nodejs-4-rhel7:latest"
+- name: mechanics-base
+  image: "{{ demo_private_registry_url }}/keynote/mechanics-base:latest"
+- name: achievement-base
+  image: "{{ demo_private_registry_url }}/keynote/achievement-base:latest"
 
-demo_ui_nginx_image: detiber/s2i-nginx
+demo_prime_images:
+- name: nodejs-4-rhel7
+  image: registry.access.redhat.com/rhscl/nodejs-4-rhel7:4.4
+- name: eap70-openshift
+  image: registry.access.redhat.com/jboss-eap-7/eap70-openshift:latest
+
+
+demo_proxy_nginx_image: detiber/s2i-nginx
 demo_ui_replicas: 1
+demo_che_replicas: 1
 
 demo_api_port: 443
 demo_route_53_subdomain: "{{ demo_route_53_zone }}"
@@ -103,6 +116,7 @@ openshift_hosted_infra_selector: "node_type=infra"
 openshift_hosted_registry_storage_kind: object
 openshift_hosted_registry_storage_provider: s3
 openshift_hosted_registry_storage_s3_create: yes
+openshift_hosted_registry_storage_s3_chunksize: 10485760
 openshift_hosted_metrics_storage_kind: dynamic
 openshift_hosted_metrics_storage_volume_size: 100Gi
 openshift_hosted_metrics_deployer_prefix: detiber/origin-

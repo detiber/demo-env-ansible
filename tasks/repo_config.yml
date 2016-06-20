@@ -5,8 +5,8 @@
   changed_when: false
 
 - name: Enable rhui extras channel
-  command: yum-config-manager --enable rhui-REGION-rhel-server-extras
-  when: "'rhui-REGION-rhel-server-extras' not in repolist.stdout"
+  command: yum-config-manager --enable rhui-REGION-rhel-server-extras rhui-REGION-rhel-server-optional
+  when: "{{ 'rhui-REGION-rhel-server-extras' not in repolist.stdout or 'rhui-REGION-rhel-server-optional' not in repolist.stdout }}"
 
 - name: Create repo cert file
   copy:

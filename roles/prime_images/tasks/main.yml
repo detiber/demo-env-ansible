@@ -1,0 +1,12 @@
+---
+- name: Get the docker login string for ecr
+  command: aws ecr get-login --region us-east-1
+  register: ecr_login
+  delegate_to: "{{ groups.masters.0 }}"
+
+- name: Perform docker login
+  command: "{{ ecr_login.stdout }}"
+
+- name: pre-pull images
+  command: "docker pull {{ item.image }}"
+  with_items: "{{ demo_prime_images | union(demo_private_registry_images) }}"

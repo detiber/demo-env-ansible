@@ -2,7 +2,50 @@
 - name: Create the s2i-nginx imagestream
   command: >
     oc import-image -n openshift s2i-nginx-test
-    --from={{ demo_ui_nginx_image}} --all --confirm
+    --from={{ demo_proxy_nginx_image}} --all --confirm
 
-- include: ui.yml
-- include: che.yml
+- name: Create the projects
+  command: oadm new-project {{ item }}
+  with_items: "{{ proxy_projects }}"
+  register: proxy_project
+  failed_when: "{{ proxy_project.rc == 1 and 'already exists' not in proxy_project.stderr }}"
+  changed_when: "{{ proxy_project.rc == 0 }}"
+
+- name: Create the git secret
+  command: oc secrets new-basicauth git-secret --username={{ demo_pipeline_github_user }} --password={{ demo_pipeline_github_password }} -n {{ item }}
+  with_items: "{{ proxy_projects }}"
+  register: git_secret
+  failed_when: "{{ git_secret.rc == 1 and 'already exists' not in git_secret.stderr }}"
+  changed_when: "{{ git_secret.rc == 0 }}"
+
+- name: Add the git secret to the builder service account
+  command: oc secrets add serviceaccount/builder secrets/git-secret -n {{ item }}
+  with_items: "{{ proxy_projects }}"
+  register: add_git_secret
+
+- name: Create the template
+  shell: >
+    echo {{ lookup('file', 'proxy.yml') | from_yaml | to_json | quote }} |  oc create -n {{ item }} -f -
+  with_items: "{{ proxy_projects }}"
+  register: proxy_template
+  failed_when: "{{ proxy_template.rc == 1 and 'already exists' not in proxy_template.stderr }}"
+  changed_when: "{{ proxy_template.rc == 0 }}"
+
+- name: Create the app
+  shell: >
+    oc new-app -n {{ item }} --template=proxy-template -p 'REPLICAS={{
+    proxy_params[item].replicas }},S3_BUCKET_TO_PROXY={{
+    proxy_params[item].s3_bucket }},NAME={{ item }},HTPASSWD_CONTENTS={{
+    proxy_params[item].htpasswd_contents }},APPLICATION_DOMAIN={{
+    proxy_params[item].app_dns }}'
+  with_items: "{{ proxy_projects }}"
+  register: proxy_app
+  failed_when: "{{ proxy_app.rc == 1 and 'already exists' not in proxy_app.stderr }}"
+  changed_when: "{{ proxy_app.rc == 0 }}"
+
+- name: Create the che oauth client
+  shell: >
+    echo '{"kind": "OAuthClient", "apiVersion": "v1", "metadata": {"name": "che"}, "secret": "{{ demo_che_oauth_secret }}", "redirectURIs": ["{{ demo_che_oauth_redirect_uri }}"]}' | oc create -f -
+  register: che_oauth
+  failed_when: "{{ che_oauth.rc == 1 and 'already exists' not in che_oauth.stderr }}"
+  changed_when: "{{ che_oauth.rc == 0 }}"

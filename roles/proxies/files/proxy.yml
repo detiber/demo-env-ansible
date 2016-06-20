@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: Template
 metadata:
-  name: ui-proxy-template
+  name: proxy-template
 parameters:
 - name: REPLICAS
   display_name: Number of replicas
-  value: 1
-- name: SOURCE_REPOPOSITORY_URL
+  value: '1'
+- name: SOURCE_REPOSITORY_URL
   display_name: Git Repository URL
   value: https://github.com/Red-Hat-Middleware-Keynote/nginx-proxy.git
 - name: SOURCE_REPOSITORY_REF
@@ -18,7 +18,7 @@ parameters:
   value: ''
 - name: S3_BUCKET_TO_PROXY
   display_name: s3 bucket to proxy
-  value: ui.redhatkeynote.com.s3-website-us-west-1.amazonaws.com
+  value: ''
 - name: HTPASSWD_CONTENTS
   display_name: htpasswd contents
   value: ''
@@ -26,7 +26,7 @@ parameters:
   displayName: Name
   description: The name assigned to all of the frontend objects defined in this template
   required: true
-  value: ui-proxy
+  value: proxy
 - name: NAMESPACE
   displayName: Namespace
   description: The OpenShift namespace where the ImageStream resides
@@ -114,6 +114,7 @@ objects:
       targetPort: 8080-tcp
     tls:
       termination: edge
+      insecureEdgeTerminationPolicy: Redirect
     to:
       kind: Service
       name: ${NAME}
