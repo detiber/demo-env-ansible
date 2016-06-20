@@ -15,6 +15,3 @@
   set_fact:
     demo_node_iam_profile: "{{ iam_cf_output.stack_outputs.NodeInstanceProfile }}"
     demo_master_iam_profile: "{{ iam_cf_output.stack_outputs.MasterInstanceProfile }}"
-
-- debug: var=demo_node_iam_profile
-- debug: var=demo_master_iam_profile

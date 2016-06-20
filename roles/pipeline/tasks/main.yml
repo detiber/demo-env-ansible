@@ -22,19 +22,19 @@
   shell: >
     echo '{"kind": "ServiceAccount", "apiVersion": "v1", "metadata": {"name": "pipeline-builder", "namespace": "default" }}' | oc create -f -
   register: create_sa
-  changed_when: create_sa.rc == 0
-  failed_when: "create_sa.rc == 1 and 'already exists' not in create_sa.stderr"
+  changed_when: "{{ create_sa.rc == 0 }}"
+  failed_when: "{{ create_sa.rc == 1 and 'already exists' not in create_sa.stderr }}"
 
 - name: Add the system:image-puller role
   command: >
     oadm policy add-cluster-role-to-user system:image-puller system:serviceaccount:default:pipeline-builder
-  when: create_sa | changed
+  when: "{{ create_sa | changed }}"
 
 # TODO: determine the proper permissions rather than adding cluster-admin
 - name: Add the cluter-admin role
   command: >
     oadm policy add-cluster-role-to-user cluster-admin system:serviceaccount:default:pipeline-builder
-  when: create_sa | changed
+  when: "{{ create_sa | changed }}"
 
 - name: Create the jenkins project
   command: oadm new-project jenkins
@@ -50,16 +50,12 @@
   changed_when: "{{ pipeline_projects.rc == 0 }}"
 
 - name: Add admin users to projects
-  command: oc policy add-role-to-user admin {{ item.1 }} -n {{ item.0 }}
-  with_nested:
-  - "{{ demo_pipeline_projects }}"
-  - "{{ demo_pipeline_project_admin }}"
+  command: oc policy add-role-to-user -n {{ item }} admin {{ demo_pipeline_project_admin | oo_split(' ') }}
+  with_items: "{{ demo_pipeline_projects }}"
 
 - name: Add view users to projects
-  command: oc policy add-role-to-user view {{ item.1 }} -n {{ item.0 }}
-  with_nested:
-  - "{{ demo_pipeline_projects }}"
-  - "{{ demo_pipeline_project_view }}"
+  command: oc policy add-role-to-user -n {{ item }} view {{ demo_pipeline_project_view | oo_split(' ') }}
+  with_items: "{{ demo_pipeline_projects }}"
 
 - name: Create the git secret
   command: oc secrets new-basicauth git-secret --username={{ demo_pipeline_github_user }} --password={{ demo_pipeline_github_password }} -n {{ item }}

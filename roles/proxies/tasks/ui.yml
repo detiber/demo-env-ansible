@@ -5,6 +5,16 @@
   failed_when: "{{ ui_project.rc == 1 and 'already exists' not in ui_project.stderr }}"
   changed_when: "{{ ui_project.rc == 0 }}"
 
+- name: Create the git secret
+  command: oc secrets new-basicauth git-secret --username={{ demo_pipeline_github_user }} --password={{ demo_pipeline_github_password }} -n ui-proxy
+  register: git_secret
+  failed_when: "{{ git_secret.rc == 1 and 'already exists' not in git_secret.stderr }}"
+  changed_when: "{{ git_secret.rc == 0 }}"
+
+- name: Add the git secret to the builder service account
+  command: oc secrets add serviceaccount/builder secrets/git-secret -n ui-proxy
+  register: add_git_secret
+
 - name: Create the ui-proxy template
   shell: >
     echo {{ lookup('file', 'ui_proxy.yml') | from_yaml | to_json | quote }} |  oc create -n ui-proxy -f -
@@ -14,5 +24,8 @@
 
   # TODO set APPLICATION_DOMAIN
 - name: Create the ui-proxy app
-  command: >
-    oc new-app -n ui-proxy --template=ui-proxy-template --param="REPLICAS={{ demo_ui_replicas }},S3_BUCKET_TO_PROXY={{ demo_ui_s3_bucket }},HTPASSWD_CONTENTS={{ demo_ui_htpasswd_contents }},NAME=ui-proxy"
+  shell: >
+    oc new-app -n ui-proxy --template=ui-proxy-template -p 'REPLICAS={{ demo_ui_replicas }},S3_BUCKET_TO_PROXY={{ demo_ui_s3_bucket }},NAME=ui-proxy,HTPASSWD_CONTENTS={{ demo_ui_htpasswd_contents }},APPLICATION_DOMAIN={{ demo_ui_app_dns }}'
+  register: ui_app
+  failed_when: "{{ ui_app.rc == 1 and 'already exists' not in ui_app.stderr }}"
+  changed_when: "{{ ui_app.rc == 0 }}"

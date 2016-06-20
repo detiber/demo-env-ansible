@@ -6,7 +6,7 @@ parameters:
 - name: REPLICAS
   display_name: Number of replicas
   value: '1'
-- name: SOURCE_REPOPOSITORY_URL
+- name: SOURCE_REPOSITORY_URL
   display_name: Git Repository URL
   value: https://github.com/Red-Hat-Middleware-Keynote/nginx-proxy.git
 - name: SOURCE_REPOSITORY_REF
@@ -90,7 +90,7 @@ objects:
           image: " "
           name: ${NAME}
           ports:
-          - containerPort: '8080'
+          - containerPort: 8080
             protocol: TCP
           resources: {}
           terminationMessagePath: /dev/termination-log
@@ -124,8 +124,8 @@ objects:
   spec:
     ports:
     - name: 8080-tcp
-      port: '8080'
+      port: 8080
       protocol: TCP
-      targetPort: '8080'
+      targetPort: 8080
     selector:
       name: ${NAME}
