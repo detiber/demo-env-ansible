@@ -116,7 +116,7 @@ openshift_hosted_infra_selector: "node_type=infra"
 openshift_hosted_registry_storage_kind: object
 openshift_hosted_registry_storage_provider: s3
 openshift_hosted_registry_storage_s3_create: yes
-openshift_hosted_registry_storage_s3_chunksize: 10485760
+openshift_hosted_registry_storage_s3_chunksize: 26214400
 openshift_hosted_metrics_storage_kind: dynamic
 openshift_hosted_metrics_storage_volume_size: 100Gi
 openshift_hosted_metrics_deployer_prefix: detiber/origin-
