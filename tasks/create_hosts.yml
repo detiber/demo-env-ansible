@@ -52,4 +52,7 @@
       AdditionalAppAlias2: "{{ demo_additional_app_alias2 }}"
       AdditionalAppAlias3: "{{ demo_additional_app_alias3 }}"
       AdditionalAppAlias4: "{{ demo_additional_app_alias4 }}"
+      AdditionalAppAlias5: "{{ demo_additional_app_alias5 }}"
+      AdditionalAppAlias6: "{{ demo_additional_app_alias6 }}"
+      AdditionalAppAlias7: "{{ demo_additional_app_alias7 }}"
   register: hosts_cf_output

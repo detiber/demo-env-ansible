@@ -164,6 +164,10 @@
     "AdditionalAppAlias6": {
       "Type": "String",
       "Default": ""
+    },
+    "AdditionalAppAlias7": {
+      "Type": "String",
+      "Default": ""
     }
   },
   "Conditions": {
@@ -174,7 +178,8 @@
     "UseAdditionalAppAlias3": {"Fn::Not": [{"Fn::Equals" : [{"Ref" : "AdditionalAppAlias3"}, ""]}]},
     "UseAdditionalAppAlias4": {"Fn::Not": [{"Fn::Equals" : [{"Ref" : "AdditionalAppAlias4"}, ""]}]},
     "UseAdditionalAppAlias5": {"Fn::Not": [{"Fn::Equals" : [{"Ref" : "AdditionalAppAlias5"}, ""]}]},
-    "UseAdditionalAppAlias6": {"Fn::Not": [{"Fn::Equals" : [{"Ref" : "AdditionalAppAlias6"}, ""]}]}
+    "UseAdditionalAppAlias6": {"Fn::Not": [{"Fn::Equals" : [{"Ref" : "AdditionalAppAlias6"}, ""]}]},
+    "UseAdditionalAppAlias7": {"Fn::Not": [{"Fn::Equals" : [{"Ref" : "AdditionalAppAlias7"}, ""]}]}
   },
   "Resources": {
     "MasterIntElb": {
@@ -394,6 +399,22 @@
               "UseAdditionalAppAlias6",
 	      {
 	        "Name": { "Ref": "AdditionalAppAlias6" },
+                "Type": "A",
+                "AliasTarget": {
+                  "HostedZoneId": { "Fn::GetAtt" : ["InfraElb", "CanonicalHostedZoneNameID"] },
+                  "DNSName": { "Fn::GetAtt" : ["InfraElb","CanonicalHostedZoneName"] }
+                }
+	      },
+              {
+                "Ref" : "AWS::NoValue"
+              }
+	    ]
+	  },
+	  {
+            "Fn::If": [
+              "UseAdditionalAppAlias7",
+	      {
+	        "Name": { "Ref": "AdditionalAppAlias7" },
                 "Type": "A",
                 "AliasTarget": {
                   "HostedZoneId": { "Fn::GetAtt" : ["InfraElb", "CanonicalHostedZoneNameID"] },
