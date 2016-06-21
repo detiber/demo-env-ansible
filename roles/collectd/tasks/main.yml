@@ -10,7 +10,7 @@
     state: installed
   with_items:
   - collectd
-  - collectd lvm
+  - collectd-lvm
   - collectd-turbostat
 
 - name: Allow collectd to network connect
