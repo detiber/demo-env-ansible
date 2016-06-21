@@ -11,13 +11,19 @@
   with_items:
   - collectd
   - collectd-lvm
-  - collectd-turbostat
 
 - name: Allow collectd to network connect
   seboolean:
     name: collectd_tcp_network_connect
     state: yes
     persistent: yes
+
+# This is to workaround the selinux policy not supporting the collectd-lvm
+# plugin
+- name: Set the collectd_t selinux domain to permissive
+  selinux_permissive:
+    name: collectd_t
+    permissive: true
 
 - name: Copy the collectd config
   template:
