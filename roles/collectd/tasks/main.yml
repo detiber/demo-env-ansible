@@ -4,10 +4,14 @@
     name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
     state: installed
 
-- name: Install collectd
+- name: Install collectd and plugins
   package:
-    name: collectd
+    name: "{{ item }}"
     state: installed
+  with_items:
+  - collectd
+  - collectd lvm
+  - collectd-turbostat
 
 - name: Allow collectd to network connect
   seboolean:
