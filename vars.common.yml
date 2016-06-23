@@ -34,7 +34,6 @@ demo_keypair: keynote-demo
 
 demo_projects:
 - demo
-- gogs
 - jenkins
 
 # Demo deployment settings
