@@ -9,4 +9,4 @@
 
 - name: pre-pull images
   command: "docker pull {{ item.image }}"
-  with_items: "{{ demo_prime_images | union(demo_private_registry_images) }}"
+  with_items: "{{ demo_prime_images | union(demo_registry_images) }}"

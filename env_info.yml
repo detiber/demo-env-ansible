@@ -36,23 +36,34 @@
   vars:
     env_info_filename: "{{ hostvars.localhost.env_info_filename }}"
   tasks:
-  - name: Gather the generated secret names
+  - name: Gather the pipeline-builder secret names
     command: "oc get sa pipeline-builder -o jsonpath='{.secrets[*].name}'"
     register: pipeline_secret_names
     changed_when: false
 
-  - name: Get the SA token secret
+  - name: Get the pipeline-bulilder SA token secret
     command: "oc get secret {{ pipeline_secret_names.stdout }} -o jsonpath='{range .items[?(@.data.token)]}{.metadata.name}{\": \"}{.data.token}{end}'"
     changed_when: false
     when: pipeline_secret_names.stdout != ''
     register: pipeline_secrets
+
+  - name: Gather the management-admin secret names
+    command: "oc get sa management-admin -n management-infra -o jsonpath='{.secrets[*].name}'"
+    register: management_admin_secret_names
+    changed_when: false
+
+  - name: Get the management-admin SA token secret
+    command: "oc get secret -n management-infra {{ management_admin_secret_names.stdout }} -o jsonpath='{range .items[?(@.data.token)]}{.metadata.name}{\": \"}{.data.token}{end}'"
+    changed_when: false
+    when: management_admin_secret_names.stdout != ''
+    register: management_admin_secrets
 
   - local_action:
       module: blockinfile
       dest: "{{ env_info_filename }}"
       marker: "==={mark} Service Account Info ==="
       create: yes
-      block: "{{ pipeline_secrets.stdout }}"
+      block: "{{ pipeline_secrets.stdout }}\n{{ management_admin_secrets.stdout }}"
     become: no
 
   - name: Grab the admin kubeconfig

@@ -32,23 +32,32 @@ demo_node_instance_type: m4.2xlarge
 demo_infra_instance_type: "{{ ec2.default_instance_type }}"
 demo_keypair: keynote-demo
 
+demo_projects:
+- demo
+- gogs
+- jenkins
+
 # Demo deployment settings
 demo_pipeline_projects:
 - development
 - qa
 - staging
 - production
-- demo
 
-demo_private_registry_images:
+demo_registry_images:
 - name: vertx-s2i
   image: "{{ demo_private_registry_url }}/keynote/vertx-s2i:latest"
+- name: nodejs-base
+  image: "{{ demo_private_registry_url }}/keynote/nodejs-base:latest"
 - name: nodejs4-imagemagick
-  image: "{{ demo_private_registry_url }}/keynote/nodejs-4-rhel7:latest"
+  image: "{{ demo_private_registry_url }}/keynote/nodejs-imagemagick:latest"
 - name: mechanics-base
   image: "{{ demo_private_registry_url }}/keynote/mechanics-base:latest"
 - name: achievement-base
   image: "{{ demo_private_registry_url }}/keynote/achievement-base:latest"
+- name: jenkins-1-rhel
+  image: registry.access.redhat.com/openshift3/jenkins-1-rhel7:latest
+
 
 demo_prime_images:
 - name: nodejs-4-rhel7

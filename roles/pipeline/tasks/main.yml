@@ -17,12 +17,6 @@
     oadm policy add-cluster-role-to-user cluster-admin system:serviceaccount:default:pipeline-builder
   when: "{{ create_sa | changed }}"
 
-- name: Create the jenkins project
-  command: oadm new-project jenkins
-  register: jenkins_project
-  failed_when: "{{ jenkins_project.rc == 1 and 'already exists' not in jenkins_project.stderr }}"
-  changed_when: "{{ jenkins_project.rc == 0 }}"
-
 - name: Create projects
   command: oadm new-project {{ item }}
   with_items: "{{ demo_pipeline_projects }}"
@@ -31,18 +25,17 @@
   changed_when: "{{ pipeline_projects.rc == 0 }}"
 
 - name: Add admin users to projects
-  command: oc policy add-role-to-user -n {{ item }} admin {{ demo_pipeline_project_admin | oo_split(' ') }}
-  with_items: "{{ demo_pipeline_projects }}"
+  command: oc policy add-role-to-user -n {{ item.item }} admin {{ demo_project_admin }}
+  with_items: "{{ create_projects.results }}"
 
 - name: Add view users to projects
-  command: oc policy add-role-to-user -n {{ item }} view {{ demo_pipeline_project_view | oo_split(' ') }}
-  with_items: "{{ demo_pipeline_projects }}"
+  command: oc policy add-role-to-user -n {{ item.item }} view {{ demo_project_view }}
+  with_items: "{{ create_projects.results }}"
 
 - name: Create the git secret
-  command: oc secrets new-basicauth git-secret --username={{ demo_pipeline_github_user }} --password={{ demo_pipeline_github_password }} -n {{ item }}
+  command: oc secrets new-basicauth git-secret --username={{ demo_github_user }} --password={{ demo_github_password }} -n {{ item }}
   with_items:
   - "{{ demo_pipeline_projects.0 }}"
-#  - jenkins
   register: git_secret
   failed_when: "{{ git_secret.rc == 1 and 'already exists' not in git_secret.stderr }}"
   changed_when: "{{ git_secret.rc == 0 }}"
@@ -51,73 +44,4 @@
   command: oc secrets add serviceaccount/builder secrets/git-secret -n {{ item }}
   with_items:
   - "{{ demo_pipeline_projects.0 }}"
-#  - jenkins
   register: add_git_secret
-
-- name: Install awscli
-  package:
-    name: awscli
-    state: present
-
-- name: Login to ecr registry
-  shell: aws ecr get-login --region us-east-1 | awk '{ print $4 "\n" $6 "\n" $8  }'
-  register: ecr_login
-
-# TODO: test value of secret and re-create/update if needed
-- name: Create the docker secrets for private registry
-  command: >
-    oc secrets new-dockercfg private-registry
-    --docker-server={{ demo_private_registry_url }}
-    --docker-username={{ ecr_login.stdout_lines.0 }}
-    --docker-password={{ ecr_login.stdout_lines.1 }}
-    --docker-email={{ ecr_login.stdout_lines.2 }}
-    -n {{ item }}
-  with_items: "{{ demo_pipeline_projects | union(['openshift']) }}"
-  register: registry_secrets
-  failed_when: "{{ registry_secrets.rc == 1 and 'already exists' not in registry_secrets.stderr }}"
-  changed_when: "{{ registry_secrets.rc == 0 }}"
-
-- name: Add the registry secret to the builder service account
-  command: oc secrets add serviceaccount/builder secrets/private-registry -n {{ item }}
-  with_items: "{{ demo_pipeline_projects }}"
-  register: add_private_registry_secret
-
-# TODO: Test if the imagestreams already exist first
-
-- name: Create imagestreams for private registry images
-  command: >
-    oc import-image {{ item.name }} --from {{ item.image }} --confirm -n openshift
-  with_items: "{{ demo_private_registry_images }}"
-  failed_when: false
-  register: create_imagestreams
-
-#- name: Create the buildconfig for jenkins
-#  shell: >
-#    echo {{ lookup('template', 'templates/jenkins-is-bc.yml') | from_yaml | to_json | quote }} | oc create -n jenkins -f -
-#  register: jenkins_bc
-#  changed_when: jenkins_bc.rc == 0
-#  failed_when: "jenkins_bc.rc == 1 and 'already exists' not in jenkins_bc.stderr"
-#
-#- pause:
-#    minutes: 2
-#  when: jenkins_bc | changed
-#
-#- name: Gather the generated secret names
-#  command: "oc get sa pipeline-builder -o jsonpath='{.secrets[*].name}'"
-#  register: pipeline_secret_names
-#  changed_when: false
-#
-#- name: Get the SA token secret
-#  command: "oc get secret {{ pipeline_secret_names.stdout }} -o jsonpath='{range .items[?(@.data.token)]}{.data.token}{end}'"
-#  changed_when: false
-#  when: pipeline_secret_names.stdout != ''
-#  register: pipeline_token
-#
-#- name: Create the jenkins app
-#  shell: >
-#    echo {{ lookup('template', 'templates/jenkins-app.yml') | from_yaml | to_json | quote }} | oc create -n jenkins -f -
-#  register: jenkins_app
-#  changed_when: jenkins_app.rc == 0
-#  failed_when: "jenkins_app.rc == 1 and 'already exists' not in jenkins_app.stderr"
-#
-#- debug: var=jenkins_app

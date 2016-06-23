@@ -24,18 +24,12 @@
   tags:
   - post
   roles:
+  - projects
+  - imagestreams
   - gogs
   - pipeline
   - proxies
-  tasks:
-  - name: Create the new imagestreams
-    shell: >
-      echo {{ lookup('file', item) | from_json | to_json | quote }} | oc create -n openshift -f -
-    register: create_is
-    failed_when: "create_is.rc == 1 and 'already exists' not in create_is.stderr"
-    changed_when: create_is.rc ==0
-    with_fileglob:
-    - files/imagestreams/*.json
+
 
 - hosts: nodes
   tags:

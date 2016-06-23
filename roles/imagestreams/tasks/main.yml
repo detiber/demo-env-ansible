@@ -1,0 +1,43 @@
+---
+- name: Install awscli
+  package:
+    name: awscli
+    state: present
+
+- name: Login to ecr registry
+  shell: aws ecr get-login --region us-east-1 | awk '{ print $4 "\n" $6 "\n" $8  }'
+  register: ecr_login
+
+
+# TODO; do this better
+- name: Delete the existing private-registry secret
+  command: >
+    oc delete secrets private-registry -n {{ item }}
+  with_items: "{{ demo_pipeline_projects | union(demo_projects) | union(['openshift']) }}"
+  failed_when: false
+
+- name: Create the docker secrets for private registry
+  command: >
+    oc secrets new-dockercfg private-registry
+    --docker-server={{ demo_private_registry_url }}
+    --docker-username={{ ecr_login.stdout_lines.0 }}
+    --docker-password={{ ecr_login.stdout_lines.1 }}
+    --docker-email={{ ecr_login.stdout_lines.2 }}
+    -n {{ item }}
+  with_items: "{{ demo_pipeline_projects | union(demo_projects) | union(['openshift']) }}"
+  register: registry_secrets
+  failed_when: "{{ registry_secrets.rc == 1 and 'already exists' not in registry_secrets.stderr }}"
+  changed_when: "{{ registry_secrets.rc == 0 }}"
+
+- name: Add the registry secret to the builder service account
+  command: oc secrets add serviceaccount/builder secrets/private-registry -n {{ item }}
+  with_items: "{{ demo_pipeline_projects | union(demo_projects) }}"
+  register: add_private_registry_secret
+
+# TODO: Test if the imagestreams already exist first
+- name: Create imagestreams
+  command: >
+    oc import-image {{ item.name }} --from {{ item.image }} --confirm -n openshift
+  with_items: "{{ demo_registry_images }}"
+  failed_when: false
+  register: create_imagestreams

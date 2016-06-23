@@ -12,7 +12,7 @@
   changed_when: "{{ proxy_project.rc == 0 }}"
 
 - name: Create the git secret
-  command: oc secrets new-basicauth git-secret --username={{ demo_pipeline_github_user }} --password={{ demo_pipeline_github_password }} -n {{ item }}
+  command: oc secrets new-basicauth git-secret --username={{ demo_github_user }} --password={{ demo_github_password }} -n {{ item }}
   with_items: "{{ proxy_projects }}"
   register: git_secret
   failed_when: "{{ git_secret.rc == 1 and 'already exists' not in git_secret.stderr }}"
