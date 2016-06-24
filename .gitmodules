@@ -3,4 +3,5 @@
 	url = https://github.com/openshift/openshift-ansible-contrib.git
 [submodule "openshift-ansible"]
 	path = openshift-ansible
-	url = https://github.com/openshift/openshift-ansible.git
+	url = https://github.com/detiber/openshift-ansible.git
+	branch = keynote_demo_tweaks

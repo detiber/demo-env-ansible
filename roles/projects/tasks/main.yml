@@ -1,7 +1,7 @@
 ---
 - name: Create the projects
   command: oadm new-project "{{ item }}"
-  with_items: "{{ demo_projects }}"
+  with_items: "{{ demo_projects | union(demo_pipeline_projects) }}"
   register: create_projects
   failed_when: "{{ create_projects.rc == 1 and 'already exists' not in create_projects.stderr }}"
   changed_when: "{{ create_projects.rc == 0 }}"
