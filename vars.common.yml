@@ -56,6 +56,8 @@ demo_registry_images:
   image: "{{ demo_private_registry_url }}/keynote/achievement-base:latest"
 - name: jenkins-1-rhel
   image: registry.access.redhat.com/openshift3/jenkins-1-rhel7:latest
+- name: s2i-nginx
+  image: detiber/s2i-nginx:latest
 
 
 demo_prime_images:
@@ -65,8 +67,8 @@ demo_prime_images:
   image: registry.access.redhat.com/jboss-eap-7/eap70-openshift:latest
 
 
-demo_proxy_nginx_image: detiber/s2i-nginx
 demo_ui_replicas: 1
+demo_game_replicas: 1
 #demo_che_replicas: 1
 
 demo_api_port: 443

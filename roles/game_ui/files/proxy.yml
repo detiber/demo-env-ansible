@@ -1,0 +1,129 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: proxy-template
+parameters:
+- name: REPLICAS
+  display_name: Number of replicas
+  value: '1'
+- name: SOURCE_REPOSITORY_URL
+  display_name: Git Repository URL
+  value: https://github.com/Red-Hat-Middleware-Keynote/mobile-app.git
+- name: SOURCE_REPOSITORY_REF
+  display_name: Git Reference
+  value: master
+- name: APPLICATION_DOMAIN
+  displayName: Application Hostname
+  description: The exposed hostname that will route to the Node.js service, if left blank a value will be defaulted.
+  value: ''
+- name: NAME
+  displayName: Name
+  description: The name assigned to all of the frontend objects defined in this template
+  required: true
+  value: game-ui
+- name: NAMESPACE
+  displayName: Namespace
+  description: The OpenShift namespace where the ImageStream resides
+  value: openshift
+- name: GITHUB_WEBHOOK_SECRET
+  description: GitHub trigger secret
+  from: "[a-zA-Z0-9]{8}",
+  generate: expression,
+  required: true
+objects:
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    name: ${NAME}
+  spec:
+    source:
+      type: Git
+      git:
+        ref: ${SOURCE_REPOSITORY_REF}
+        uri: ${SOURCE_REPOSITORY_URL}
+      sourceSecret:
+        name: git-secret
+    strategy:
+      type: Source
+      sourceStrategy:
+        from:
+          kind: ImageStreamTag
+          name: s2i-nginx:latest
+          namespace: ${NAMESPACE}
+    output:
+      to:
+        kind: ImageStreamTag
+        name: ${NAME}:latest
+    postCommit: {}
+    resources: {}
+    triggers:
+    - type: ImageChange
+    - type: ConfigChange
+    - type: GitHub
+      github:
+        secret: ${GITHUB_WEBHOOK_SECRET}
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: ${NAME}
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    name: ${NAME}
+  spec:
+    replicas: ${REPLICAS}
+    selector:
+      name: ${NAME}
+    strategy:
+      type: Rolling
+    template:
+      metadata:
+        name: ${NAME}
+        labels:
+          name: ${NAME}
+      spec:
+        containers:
+        - env:
+          image: " "
+          name: ${NAME}
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+    triggers:
+    - type: ImageChange
+      imageChangeParams:
+        automatic: true
+        containerNames:
+        - ${NAME}
+        from:
+          kind: ImageStreamTag
+          name: ${NAME}:latest
+    - type: ConfigChange
+- apiVersion: v1
+  kind: Route
+  metadata:
+    name: ${NAME}
+  spec:
+    host: ${APPLICATION_DOMAIN}
+    port:
+      targetPort: 8080-tcp
+    tls:
+      termination: edge
+      insecureEdgeTerminationPolicy: Redirect
+    to:
+      kind: Service
+      name: ${NAME}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: ${NAME}
+  spec:
+    ports:
+    - name: 8080-tcp
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      name: ${NAME}
