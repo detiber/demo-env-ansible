@@ -1,0 +1,220 @@
+{
+  "kind": "Template",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "pg-replica-example"
+  },
+  "parameters": [
+    {
+      "name": "POSTGRESQL_MASTER_USER",
+      "description": "The username used for master-slave replication",
+      "value": "master",
+      "required": true
+    },
+    {
+      "name": "POSTGRESQL_MASTER_PASSWORD",
+      "description": "The password for the PostgreSQL replication user",
+      "generate": "expression",
+      "from": "[a-zA-Z0-9]{12}",
+      "required": true
+    },
+    {
+      "name": "POSTGRESQL_USER",
+      "description": "The username that clients will use to connect to PostgreSQL server",
+      "value": "keynote",
+      "required": true
+    },
+    {
+      "name": "POSTGRESQL_PASSWORD",
+      "description": "The password for the PostgreSQL master user",
+      "generate": "expression",
+      "from": "imEffH9QP8QcL",
+      "required": true
+    },
+    {
+      "name": "POSTGRESQL_DATABASE",
+      "description": "The name of the database that will be created",
+      "value": "userdb",
+      "required": true
+    },
+    {
+      "name": "POSTGRESQL_ADMIN_PASSWORD",
+      "description": "The password for the PostgreSQL administrator",
+      "generate": "expression",
+      "from": "[a-zA-Z0-9]{12}",
+      "required": false
+    },
+    {
+      "name": "POSTGRESQL_MASTER_SERVICE_NAME",
+      "description": "The name of the PostgreSQL Service (used to DNS lookup, default: 'postgresql-master')",
+      "value": "achievement-postgresql",
+      "required": true
+    },
+    {
+      "name": "POSTGRESQL_IMAGE",
+      "description": "PostgreSQL Docker image to use",
+      "value": "openshift/postgresql-92-centos7",
+      "required": true
+    },
+    {
+      "name": "VOLUME_CAPACITY",
+      "description": "Volume space available for data, e.g. 512Mi, 2Gi",
+      "value": "100Gi",
+      "required": true
+    },
+    {
+      "name": "POSTGRESQL_MAX_CONNECTIONS",
+      "displayName": "Max Connections",
+      "description": "Maximum number of connections",
+      "value": "500"
+    },
+    {
+      "name": "MEMORY_LIMIT",
+      "displayName": "Memory Limit",
+      "description": "Maximum amount of memory the container can use.",
+      "value": "2Gi"
+    }
+  ],
+  "objects": [
+    {
+      "kind": "PersistentVolumeClaim",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "achievement-data-claim",
+        "labels": {
+          "application": "achievement-postgres"
+        }
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "${VOLUME_CAPACITY}"
+	  }
+	}
+      }
+    },
+    {
+      "kind": "Service",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${POSTGRESQL_MASTER_SERVICE_NAME}",
+        "labels": {
+          "name": "${POSTGRESQL_MASTER_SERVICE_NAME}",
+          "application": "achievement-postgres"
+        }
+      },
+      "spec": {
+        "ports": [
+          {
+            "port": 5432,
+            "targetPort": 5432
+          }
+        ],
+        "selector": {
+          "name": "${POSTGRESQL_MASTER_SERVICE_NAME}"
+        }
+      }
+    },
+    {
+      "kind": "DeploymentConfig",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${POSTGRESQL_MASTER_SERVICE_NAME}",
+        "labels": {
+          "name": "${POSTGRESQL_MASTER_SERVICE_NAME}",
+          "application": "achievement-postgres"
+        }
+      },
+      "spec": {
+        "strategy": {
+          "type": "Recreate"
+        },
+        "triggers": [
+          {
+            "type": "ConfigChange"
+          }
+        ],
+        "replicas": 1,
+        "selector": {
+          "name": "${POSTGRESQL_MASTER_SERVICE_NAME}"
+        },
+        "template": {
+          "metadata": {
+            "labels": {
+              "name": "${POSTGRESQL_MASTER_SERVICE_NAME}",
+              "application": "achievement-postgres"
+            }
+          },
+          "spec": {
+            "volumes": [
+              {
+                "name": "achievement-data",
+                "persistentVolumeClaim": {
+                  "claimName": "achievement-data-claim"
+                }
+              }
+            ],
+            "containers": [
+              {
+                "name": "postgresql-master",
+                "image": "${POSTGRESQL_IMAGE}",
+                "args": [
+                  "run-postgresql-master"
+                ],
+                "ports": [
+                  {
+                    "containerPort": 5432
+                  }
+                ],
+                "env": [
+                  {
+                    "name": "POSTGRESQL_MASTER_USER",
+                    "value": "${POSTGRESQL_MASTER_USER}"
+                  },
+                  {
+                    "name": "POSTGRESQL_MASTER_PASSWORD",
+                    "value": "${POSTGRESQL_MASTER_PASSWORD}"
+                  },
+                  {
+                    "name": "POSTGRESQL_USER",
+                    "value": "${POSTGRESQL_USER}"
+                  },
+                  {
+                    "name": "POSTGRESQL_PASSWORD",
+                    "value": "${POSTGRESQL_PASSWORD}"
+                  },
+                  {
+                    "name": "POSTGRESQL_DATABASE",
+                    "value": "${POSTGRESQL_DATABASE}"
+                  },
+                  {
+                    "name": "POSTGRESQL_ADMIN_PASSWORD",
+                    "value": "${POSTGRESQL_ADMIN_PASSWORD}"
+                  },
+                  {
+                    "name": "POSTGRESQL_MAX_CONNECTIONS",
+                    "value": "${POSTGRESQL_MAX_CONNECTIONS}"
+                  }
+                ],
+                "resources": {
+                  "limits": {
+                    "memory": "${MEMORY_LIMIT}"
+                  }
+		},
+                "volumeMounts": [
+                  {
+                    "name": "achievement-data",
+                    "mountPath": "/var/lib/pgsql/data"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

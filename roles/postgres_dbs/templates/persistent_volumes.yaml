@@ -1,0 +1,18 @@
+---
+apiVersion: v1
+kind: List
+items:
+{% for volume in db_volumes.results %}
+- apiVersion: v1
+  kind: PersistentVolume
+  metadata:
+    name: postgres-volume-{{ volume.item }}
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    awsElasticBlockStore:
+      fsType: xfs
+      volumeID: aws://{{ ec2_zone }}/{{ volume.volume_id }}
+    capacity:
+      storage: 100Gi
+{% endfor %}

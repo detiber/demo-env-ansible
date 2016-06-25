@@ -5,4 +5,3 @@ demo_num_infra: 3
 demo_num_nodes: 10
 env_id: test
 cluster_id: demo
-openshift_hosted_metrics_cassandra_nodes: 1

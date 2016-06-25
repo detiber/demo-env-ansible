@@ -67,7 +67,7 @@ demo_prime_images:
 
 demo_proxy_nginx_image: detiber/s2i-nginx
 demo_ui_replicas: 1
-demo_che_replicas: 1
+#demo_che_replicas: 1
 
 demo_api_port: 443
 demo_route_53_subdomain: "{{ demo_route_53_zone }}"
@@ -94,14 +94,14 @@ openshift_master_console_port: "{{ demo_api_port }}"
 demo_metrics_dns: "metrics{{ demo_env_name_suffix }}.{{ demo_route_53_subdomain }}"
 demo_logging_dns: "kibana{{ demo_env_name_suffix }}.{{ demo_route_53_subdomain }}"
 demo_ui_app_dns: "ui{{ demo_env_name_suffix }}.{{ demo_route_53_subdomain }}"
-demo_che_app_dns: "che{{ demo_env_name_suffix }}.{{ demo_route_53_subdomain }}"
+#demo_che_app_dns: "che{{ demo_env_name_suffix }}.{{ demo_route_53_subdomain }}"
 demo_gamebus_app_dns: "gamebus{{ demo_env_name_suffix }}.{{ demo_route_53_subdomain }}"
 demo_playerid_app_dns: "playerid{{ demo_env_name_suffix }}.{{ demo_route_53_subdomain }}"
 demo_mosaic_app_dns: "mosaic{{ demo_env_name_suffix }}.{{ demo_route_53_subdomain }}"
 demo_traffic_app_dns: "traffic{{ demo_env_name_suffix }}.{{ demo_route_53_subdomain }}"
 demo_game_app_dns: "app{{ demo_env_name_suffix }}.{{ demo_route_53_subdomain }}"
 demo_additional_app_alias1: "{{ demo_ui_app_dns }}"
-demo_additional_app_alias2: "{{ demo_che_app_dns }}"
+#demo_additional_app_alias2: "{{ demo_che_app_dns }}"
 demo_additional_app_alias3: "{{ demo_gamebus_app_dns }}"
 demo_additional_app_alias4: "{{ demo_playerid_app_dns }}"
 demo_additional_app_alias5: "{{ demo_game_app_dns }}"
@@ -135,6 +135,7 @@ openshift_hosted_metrics_storage_kind: dynamic
 openshift_hosted_metrics_storage_volume_size: 100Gi
 openshift_hosted_metrics_deployer_prefix: detiber/origin-
 openshift_hosted_metrics_deployer_version: v1.2.0-dynamic
+openshift_hosted_metrics_cassandra_nodes: 1
 
 openshift_node_dnsmasq_max_ttl: 60
 openshift_node_dnsmasq_max_cache_size: 1024

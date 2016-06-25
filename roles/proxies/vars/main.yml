@@ -1,7 +1,7 @@
 ---
 proxy_projects:
 - ui-proxy
-- che-proxy
+#- che-proxy
 
 proxy_params:
   ui-proxy:
@@ -9,8 +9,8 @@ proxy_params:
     s3_bucket: "{{ demo_ui_s3_bucket }}"
     htpasswd_contents: "{{ demo_ui_htpasswd_contents }}"
     app_dns: "{{ demo_ui_app_dns }}"
-  che-proxy:
-    replicas: "{{ demo_che_replicas }}"
-    s3_bucket: "{{ demo_che_s3_bucket }}"
-    htpasswd_contents: "{{ demo_che_htpasswd_contents }}"
-    app_dns: "{{ demo_che_app_dns }}"
+#  che-proxy:
+#    replicas: "{{ demo_che_replicas }}"
+#    s3_bucket: "{{ demo_che_s3_bucket }}"
+#    htpasswd_contents: "{{ demo_che_htpasswd_contents }}"
+#    app_dns: "{{ demo_che_app_dns }}"

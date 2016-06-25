@@ -27,6 +27,7 @@
   - projects
   - imagestreams
   - pipeline
+  - postgres_dbs
   - proxies
 
 

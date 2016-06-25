@@ -1,0 +1,47 @@
+---
+- set_fact:
+    ec2_zone: "{{ (lookup('ec2_zones_by_region', ec2_region) | oo_split(',')).0 }}"
+  when: "{{ ec2_zone is undefined }}"
+
+- name: Create the volumes for the postgresql instances
+  become: no
+  local_action:
+    module: ec2_vol
+    name: "keynote-{{ env_id }}-{{ cluster_id }}-postgres-{{ item }}"
+    volume_type: io1
+    volume_size: 100
+    iops: 3000
+    region: "{{ ec2_region }}"
+    zone: "{{ ec2_zone }}"
+  with_sequence: count="{{ 2 * demo_pipeline_projects | length }}"
+  register: db_volumes
+
+- name: Create the persistent volumes
+  shell: >
+    echo {{ lookup('template', 'templates/persistent_volumes.yaml') | from_yaml | to_json | quote }} | oc create -f -
+  register: create_pv
+  changed_when: "{{ create_pv.rc == 0 }}"
+  failed_when: "{{ create_pv.rc == 1 and 'already exists' not in create_pv.stderr }}"
+
+- name: Create the directory for the db templates
+  file:
+    path: db_templates
+    state: directory
+
+- name: Copy the DB templates
+  copy:
+    src: files/{{ item }}_postgresql.json
+    dest: db_templates/{{ item }}_postgresql.json
+  with_items:
+  - score
+  - achievement
+
+- name: Create the DB instances
+  shell: >
+    oc -n {{ item.0 }} process -f db_templates/{{ item.1 }}_postgresql.json | oc -n {{ item.0 }} create -f -
+  with_nested:
+  - "{{ demo_pipeline_projects }}"
+  - ['score', 'achievement']
+  register: create_db
+  changed_when: "{{ create_db.rc == 0 }}"
+  failed_when: "{{ create_db.rc == 1 and 'already exists' not in create_db.stderr }}"
