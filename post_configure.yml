@@ -29,7 +29,7 @@
   - pipeline
   - postgres_dbs
   - proxies
-
+  - game_ui
 
 - hosts: nodes
   tags:
