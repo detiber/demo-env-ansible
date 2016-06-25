@@ -136,6 +136,12 @@ openshift_hosted_metrics_storage_volume_size: 100Gi
 openshift_hosted_metrics_deployer_prefix: detiber/origin-
 openshift_hosted_metrics_deployer_version: v1.2.0-dynamic
 openshift_hosted_metrics_cassandra_nodes: 1
+openshift_hosted_logging_deployer_prefix: openshift/origin-
+openshift_hosted_logging_deployer_version: latest
+openshift_hosted_logging_storage_kind: dynamic
+openshift_hosted_logging_storage_volume_size: 100Gi
+
+
 
 openshift_node_dnsmasq_max_ttl: 60
 openshift_node_dnsmasq_max_cache_size: 1024
