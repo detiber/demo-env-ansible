@@ -1,0 +1,29 @@
+---
+- hosts: localhost
+  gather_facts: no
+  become: no
+  connection: local
+  vars:
+    env_cluster_hosts: "{{ groups['tag_environment_' ~ env_id]
+                           | intersect(groups['tag_clusterid_' ~ cluster_id]) }}"
+    master_hosts: "{{ groups['tag_environment_' ~ env_id]
+                      | intersect(groups['tag_clusterid_' ~ cluster_id]
+                                  | intersect( groups['tag_host-type_master'])) }}"
+    node_hosts: "{{ groups['tag_environment_' ~ env_id]
+                    | intersect(groups['tag_clusterid_' ~ cluster_id]
+                                | intersect(groups['tag_sub-host_type_compute'])) }}"
+    infra_hosts: "{{ groups['tag_environment_' ~ env_id]
+                     | intersect(groups['tag_clusterid_' ~ cluster_id]
+                                 | intersect(groups['tag_sub-host_type_infra'])) }}"
+  tasks:
+  - include: tasks/group_setup.yml
+
+- hosts: masters[0]
+  tasks:
+  - debug: var=group_names
+  - debug: var=environment
+  - debug: var=vars
+  - debug: var=groups
+  - debug: var=hostvars
+  - debug: var=hostvars[inventory_hostname]
+
