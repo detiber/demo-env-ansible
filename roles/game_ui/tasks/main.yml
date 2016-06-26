@@ -1,8 +1,8 @@
 ---
-- name: Create the app
-  shell: >
-    oc new-app -n {{ item }} --template=proxy-template -p 'REPLICAS={{
-    demo_game_replicas }},APPLICATION_DOMAIN={{ demo_game_app_dns }}'
-  register: game_ui_app
-  failed_when: "{{ game_ui_app.rc == 1 and 'already exists' not in game_ui_app.stderr }}"
-  changed_when: "{{ game_ui_app.rc == 0 }}"
+#- name: Create the app
+#  shell: >
+#    oc new-app -n {{ item }} --template=proxy-template -p 'REPLICAS={{
+#    demo_game_replicas }},APPLICATION_DOMAIN={{ demo_game_app_dns }}'
+#  register: game_ui_app
+#  failed_when: "{{ game_ui_app.rc == 1 and 'already exists' not in game_ui_app.stderr }}"
+#  changed_when: "{{ game_ui_app.rc == 0 }}"
