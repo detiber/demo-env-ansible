@@ -20,10 +20,5 @@
 
 - hosts: masters[0]
   tasks:
-  - debug: var=group_names
-  - debug: var=environment
-  - debug: var=vars
-  - debug: var=groups
-  - debug: var=hostvars
-  - debug: var=hostvars[inventory_hostname]
+  - debug: var=cluster_prod_demo_group
 
