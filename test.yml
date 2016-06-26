@@ -20,5 +20,9 @@
 
 - hosts: masters[0]
   tasks:
-  - debug: var=cluster_prod_demo_group
+  - debug: var=openshift_hosted_registry_storage_s3_bucket
+  - debug: var=demo_mosaic_app_dns
+  - debug: var=demo_num_infra
+  - debug: var=ec2_region
+  - debug: var=openshift_node_labels
 
