@@ -162,7 +162,7 @@
                 "name": "postgresql-master",
                 "image": "${POSTGRESQL_IMAGE}",
                 "args": [
-                  "run-postgresql-master"
+                  "run-postgresql-master -c synchronous_commit=off"
                 ],
                 "ports": [
                   {
